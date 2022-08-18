@@ -13,7 +13,15 @@
 	}
 
 	function quickPlay() {
-		//implement later
+		socket.emit('quick-play', (response) => {
+			if (response.gameId) {
+				socket.emit('join-game', { gameId: response.gameId }, (response) => {
+					if (response.status === 'ok') {
+						activeComponent.set('lobby');
+					}
+				});
+			} else alert('no game found');
+		});
 	}
 
 	function test() {
