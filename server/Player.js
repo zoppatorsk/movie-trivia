@@ -3,7 +3,7 @@ const { nanoid } = require('nanoid'); //temp dependecy so can generate users wit
 //add more stuff to player class later when needed.. score maybe.. heeh...
 module.exports = class Player {
 	constructor({ name = 'John Doe' + nanoid(), id = null } = {}) {
-		this.playername = name;
+		this.name = name;
 		this.id = id;
 		this.ready = false;
 	}

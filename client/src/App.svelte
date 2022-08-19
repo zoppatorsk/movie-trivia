@@ -1,6 +1,6 @@
 <script>
 	import { io } from 'socket.io-client';
-	import { activeComponent } from './lib/stores/';
+	import { activeComponent, players } from './lib/stores/';
 	import Start from './components/Start.svelte';
 	import Lobby from './components/Lobby.svelte';
 
@@ -11,6 +11,18 @@
 
 	socket.on('connect', () => {
 		connected = 'We got a signal!';
+	});
+
+	//when player in disconnects
+	socket.on('player-joined', (player) => {
+		console.log('player joined', player);
+		//new player joined so at it to the store
+		$players = [...$players, player];
+	});
+
+	socket.on('player-left', (playerId) => {
+		console.log('got playerLeft');
+		$players = $players.filter((player) => player.id !== playerId);
 	});
 </script>
 
