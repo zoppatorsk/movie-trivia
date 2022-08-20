@@ -1,6 +1,6 @@
 const Game = require('./Game');
 const Player = require('./Player');
-const { disconnecting, quickPlay, countDownToRoundStart, countDownRound } = require('./modules/functions');
+const { quickPlay } = require('./modules/functions');
 const games = new Map(); //use a map to store all the games so can easily access them by id
 
 module.exports = function (io) {
@@ -133,7 +133,7 @@ function shouldGameStart(io, game) {
 function shouldStartRound(io, game) {
 	if (game.howManyPlayersReady() !== game.players.size) return;
 	game.status = 'waiting-for-answer';
-	io.to(gameId).emit('round-start');
+	io.to(game.id).emit('round-start');
 	game.startRoundCountDown(io, endRound);
 }
 

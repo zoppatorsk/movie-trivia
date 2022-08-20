@@ -11,4 +11,4 @@ function quickPlay(games) {
 	return gameId;
 }
 
-module.exports = { disconnecting, quickPlay };
+module.exports = { quickPlay };
