@@ -45,9 +45,3 @@
 	<button on:click={quickPlay}>Quickplay</button>
 	<button on:click={test}>List Games</button>
 </div>
-
-<style>
-	button {
-		color: white;
-	}
-</style>

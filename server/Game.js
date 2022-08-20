@@ -6,8 +6,11 @@ module.exports = class Game {
 		this.maxPlayers = maxPlayers;
 		this.rounds = rounds;
 		this.round = 1;
+		this.waitBetweenRounds = 5;
+		this.roundTime = 10;
 		this.status = 'open';
 		this.players = new Map();
+		this.results = 'think about later';
 	}
 
 	join(player) {
@@ -22,6 +25,23 @@ module.exports = class Game {
 	leave(playerid) {
 		this.players.delete(playerid);
 	}
+
+	resetPlayerReady() {
+		this.players.forEach((player) => {
+			player.ready = false;
+		});
+	}
+	howManyPlayersReady() {
+		let ready = 0;
+		this.players.forEach((player) => {
+			if (player.ready) ready++;
+		});
+		return ready;
+	}
+	allPlayersHaveAnswered() {
+		return false;
+	}
+
 	getPublicData() {
 		return {
 			id: this.id,

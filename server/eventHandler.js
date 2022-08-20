@@ -1,6 +1,6 @@
 const Game = require('./Game');
 const Player = require('./Player');
-const { disconnecting, quickPlay } = require('./modules/functions');
+const { disconnecting, quickPlay, countDownToRoundStart, countDownRound } = require('./modules/functions');
 const games = new Map(); //use a map to store all the games so can easily access them by id
 
 module.exports = function (io) {
@@ -10,7 +10,7 @@ module.exports = function (io) {
 
 		//use disconnecting instead of discconnect so still have access to room of socket n stuff
 		socket.on('disconnecting', () => {
-			disconnecting(io, socket, games);
+			disconnecting(io, socket, games); //abstracted away the code into a function
 			console.log(socket.id + ' disconnecting');
 		});
 
@@ -33,7 +33,6 @@ module.exports = function (io) {
 			const { gameId } = data; //data shld be like { player: { name: '', etc.. }, gameid: '' }
 			const game = games.get(gameId);
 			const player = new Player({ id: socket.id }); //create player
-
 			const successfullJoin = game.join(player); //try to join the game
 			if (successfullJoin) {
 				socket.join(gameId);
@@ -51,22 +50,100 @@ module.exports = function (io) {
 			callback({ gameId });
 		});
 
+		socket.on('player-ready', (gameId) => {
+			const game = games.get(gameId);
+			//check the state of the game
+
+			//maybe we need to do something here later except reurn but probably not, this is just safeguard if socket reconnects n start sending shit
+			if (game.status !== 'open' && game.status !== 'waiting-for-start') return;
+
+			//when player is ready shld.. change the ready variable of player
+			game.players.get(socket.id).ready = true;
+			if (game.status !== 'waiting-for-start') game.status = 'waiting-for-start'; //now we do not accept any new players
+
+			//if half of players are not ready then just return
+			if (game.howManyPlayersReady() < game.players.size / 2) return;
+			//here shld run a function that is reused everytime a new round starts
+			getReady(io, game);
+		});
+
+		socket.on('player-ready-round', (gameId) => {
+			const game = games.get(gameId);
+			if (game.status !== 'get-ready' && game.status !== 'waiting-for-ready') return;
+			if (game.status !== 'waiting-for-ready') game.status = 'waiting-for-ready';
+			game.players.get(socket.id).ready = true;
+			if (game.howManyPlayersReady() !== game.players.size) return;
+			game.status = 'waiting-for-answer';
+			io.to(gameId).emit('round-start');
+			//we need to set the interval for countdown.. i think shld store this in the game object cuz i need to be able to clear it later from outside where it was started
+		});
+
+		socket.on('answer', (gameId, answer) => {
+			const game = games.get(gameId);
+			if (game.status !== 'waiting-for-answer') return;
+			//store the answer
+			//check if all players have answered
+			if (game.allPlayersHaveAnswered() == false) return;
+			//clear the interval
+
+			//this code shld be in a function as it will also need to be run if not all have answered and time runs out
+			game.round++;
+			if (game.round > game.rounds) {
+				game.status = 'end-game';
+				io.to(gameId).emit('end-game', game.results);
+				games.delete(gameId);
+			}
+			game.status = 'end-round';
+			io.to(gameId).emit('end-round'); //need to send with some reuslts
+			getReady(io, game);
+		});
+
+		// socket.on('round-started', (gameId) => {
+		// 	//later need to break some of this out into a function and re run on depending on status when a player disconnects
+		// 	const game = games.get(gameId);
+		// 	game.players.get(socket.id).ready = true; //set player ready to true
+		// 	let readyCount = 0;
+		// 	for (const [id, player] of game.players.entries()) {
+		// 		if (player.ready) readyCount++;
+		// 	}
+		// 	if (readyCount < game.players.size) return; //return if all players are not ready
+
+		// 	countDownRound(io, game); //start the countdown for the round
+		// 	game.status = 'round started';
+		// 	//reset the ready status
+		// 	for (const [id, player] of game.players.entries()) {
+		// 		player.ready = false;
+		// 	}
+		// });
+
 		//just a testing function so can check on various thins
 		socket.on('test', () => {
 			console.log(games);
 		});
-	});
 
-	//should this be in connection?? or is it ok to have it here?.. I dont know when it triggers.. check on later
-	io.engine.on('connection_error', (err) => {
-		console.log('CONNECTION_ERROR!!');
-		console.log(err.req); // the request object
-		console.log(err.code); // the error code, for example 1
-		console.log(err.message); // the error message, for example "Session ID unknown"
-		console.log(err.context); // some additional error context
+		io.engine.on('connection_error', (err) => {
+			console.log('CONNECTION_ERROR!!');
+			console.log(err.req); // the request object
+			console.log(err.code); // the error code, for example 1
+			console.log(err.message); // the error message, for example "Session ID unknown"
+			console.log(err.context); // some additional error context
+		});
 	});
-
-	function checkStatus(game) {
-		//implement later... check status of game and handle stuff accordingly.. maybe round will end..
-	}
 };
+
+function getReady(io, game) {
+	game.status = 'get-ready';
+	game.resetPlayerReady();
+	let count = game.waitBetweenRounds + 1;
+	const counter = setInterval(countdown, 1000, game.id);
+
+	function countdown(gameId) {
+		count--;
+		console.log(count);
+		io.to(gameId).emit('count-down', count);
+		if (count == 0) {
+			clearInterval(counter);
+			io.to(gameId).emit('ready-round'); //here neeed to send with some junk later.. like question n metadata about it
+		}
+	}
+}

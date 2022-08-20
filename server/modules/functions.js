@@ -34,4 +34,36 @@ function quickPlay(games) {
 	return gameId;
 }
 
-module.exports = { disconnecting, quickPlay };
+function countDownToRoundStart(io, game) {
+	let count = 5 + 1;
+	const counter = setInterval(countdown, 1000, game.id);
+
+	function countdown(gameId) {
+		count--;
+		console.log(count);
+		io.to(gameId).emit('count-down', count);
+		if (count == 0) {
+			clearInterval(counter);
+			game.status = 'start round';
+			io.to(gameId).emit('start-round'); //here neeed to send with some junk later.. like question n metadata about it
+		}
+	}
+}
+
+function countDownRound(io, game) {
+	let count = 10 + 1;
+	const counter = setInterval(countdown, 1000, game.id);
+
+	function countdown(gameId) {
+		count--;
+		console.log(count);
+		io.to(gameId).emit('count-down', count);
+		if (count == 0) {
+			clearInterval(counter); //add some check later so know if it is the last round or not
+			game.status = 'end round';
+			io.to(gameId).emit('end-round'); //here neeed to send with some junk later.. like question n metadata about it
+		}
+	}
+}
+
+module.exports = { disconnecting, quickPlay, countDownToRoundStart, countDownRound };
