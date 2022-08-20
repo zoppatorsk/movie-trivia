@@ -17,7 +17,9 @@ module.exports = class Game {
 	startRoundCountDown(io, func) {
 		let count = this.roundTime + 1;
 		this.roundCountDown = setInterval(() => {
+			if (!this || this.players.size < 1) clearInterval(this.roundCountDown); //safe guard so interval is cleared if game is deleted
 			count--;
+			console.log(count);
 			io.to(this.id).emit('count-down', count);
 			if (count === 0) {
 				this.clearRoundCountDown();

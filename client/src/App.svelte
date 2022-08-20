@@ -51,7 +51,7 @@
 	});
 </script>
 
-<div class="app-wrapper">
+<div>
 	{#if $activeComponent === 'start'}
 		<Start {socket} />
 	{/if}

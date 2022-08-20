@@ -1,3 +1,4 @@
+import '@picocss/pico/css/pico.classless.min.css';
 import './app.css';
 import App from './App.svelte';
 

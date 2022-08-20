@@ -17,7 +17,7 @@ module.exports = function (io) {
 		//data should hold player details n game settings, just omitt for now and run on default settings
 		socket.on('create-game', function (data, callback) {
 			const game = new Game(); //create the game
-			const player = new Player({ id: socket.id }); //create the player
+			const player = new Player({ id: socket.id, name: data.name, avatar: `https://avatars.dicebear.com/api/avataaars/:${data.avatar}.svg` }); //create the player
 			game.join(player); //add the player to the game
 			games.set(game.id, game); //store the game in the games map
 			socket.join(game.id); //join the socket into a room for the game.. roomname is same as game.id
@@ -30,9 +30,9 @@ module.exports = function (io) {
 
 		//when a player want to joins a game
 		socket.on('join-game', function (data, callback) {
-			const { gameId } = data; //data shld be like { player: { name: '', etc.. }, gameid: '' }
+			const { gameId } = data;
 			const game = games.get(gameId);
-			const player = new Player({ id: socket.id }); //create player
+			const player = new Player({ id: socket.id, name: data.name, avatar: `https://avatars.dicebear.com/api/avataaars/:${data.avatar}.svg` }); //create player
 			const successfullJoin = game.join(player); //try to join the game
 			if (successfullJoin) {
 				socket.join(gameId);
@@ -82,14 +82,6 @@ module.exports = function (io) {
 		socket.on('test', () => {
 			console.log(games);
 		});
-
-		io.engine.on('connection_error', (err) => {
-			console.log('CONNECTION_ERROR!!');
-			console.log(err.req); // the request object
-			console.log(err.code); // the error code, for example 1
-			console.log(err.message); // the error message, for example "Session ID unknown"
-			console.log(err.context); // some additional error context
-		});
 	});
 };
 
@@ -100,6 +92,7 @@ function getReady(io, game) {
 	const counter = setInterval(countdown, 1000, game.id);
 
 	function countdown(gameId) {
+		if (!games.get(gameId) || games.get(gameId).players.size < 1) clearInterval(counter); //if game has been deleted or no players then stop the countdown
 		count--;
 		console.log(count);
 		io.to(gameId).emit('count-down', count);
@@ -149,7 +142,7 @@ function disconnecting(io, socket, games) {
 	//check if player is in a game and if so remove them from the game..
 	if (socket.rooms.size > 1) {
 		for (const room of socket.rooms) {
-			if (room !== socket.id) {
+			if (room !== socket.id && games.get(room) !== undefined) {
 				const game = games.get(room);
 				game?.leave(socket.id);
 
