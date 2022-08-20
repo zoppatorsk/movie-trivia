@@ -46,6 +46,7 @@
 <div class="wrapper">
 	<h1>Let's Play!</h1>
 	<img src={`https://avatars.dicebear.com/api/avataaars/:${seed}.svg`} alt="avatar" />
+
 	<input type="text" placeholder="Enter name" bind:value={playername} />
 	<input type="text" placeholder="Avatar Seed" bind:value={seed} />
 	<div class="buttons" class:disabled={!seed || !playername}>
@@ -59,12 +60,14 @@
 	h1 {
 		text-align: center;
 		margin: 0;
+		padding: 0;
 	}
 
 	.wrapper {
 		max-width: 1200px;
 		margin: 0 auto;
 	}
+
 	.buttons {
 		display: flex;
 		flex-direction: row;
@@ -89,7 +92,7 @@
 		}
 		img {
 			width: auto;
-			max-height: 200px;
+			max-height: 180px;
 		}
 	}
 </style>

@@ -7,25 +7,27 @@ body {
 	padding: 0;
 	display: flex;
 	flex-direction: column;
-	place-items: center;
+}
+body > main {
+	padding: 0;
 }
 
 main {
 	min-height: 100vh;
-	/* flex-grow: 1; */
+	flex-grow: 1;
 	margin: 0 auto;
-	padding: 20px;
+
+	/* padding: 20px; */
 	/* background-color: aliceblue; */
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 .app-wrapper {
-	flex-grow: 1;
 	/* background-color: #535bf2; */
 	max-width: 1280px;
 	margin: 0 auto;
-	padding: 2rem;
+	/* padding: 2rem; */
 	text-align: center;
 	align-items: center;
 	justify-content: center;
