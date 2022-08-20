@@ -15,7 +15,7 @@
 	const socket = io('http://localhost:3000');
 
 	socket.on('connect', () => {
-		connected = 'We got a signal!';
+		//put some icon or somthing later
 	});
 
 	//when player in disconnects
@@ -51,8 +51,7 @@
 	});
 </script>
 
-<main>
-	<h1>{connected}</h1>
+<div class="app-wrapper">
 	{#if $activeComponent === 'start'}
 		<Start {socket} />
 	{/if}
@@ -68,4 +67,4 @@
 	{#if $activeComponent === 'gameresult'}
 		<GameResult />
 	{/if}
-</main>
+</div>
