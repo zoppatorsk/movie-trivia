@@ -11,7 +11,7 @@ module.exports = class Game {
 		this.status = 'open';
 		this.players = new Map();
 		this.roundCountDown = null; //will hold the interval timer for the round
-		this.answers = { 1: {}, 2: {}, 3: {} }; //for now just store answers here.
+		this.answers = { 1: {}, 2: {}, 3: {} }; //for now just store answers here in hardcoded way, probably wld be better if stored in player object.
 	}
 
 	startRoundCountDown(io, func) {
@@ -74,10 +74,11 @@ module.exports = class Game {
 		};
 	}
 
-	//easier to do stuff on front with players as an array instead of a map
+	//easier to do stuff on frontend with players as an array instead of a map
 	getPlayersAsArray() {
 		let playersArr = [];
 		//convert the players map to an array.. this could probably be done cleaner and in one line but I am not used to working with maps
+		//this will probably be overhauled later
 		this.players.forEach((player) => {
 			playersArr.push({ ...player });
 		});
@@ -85,7 +86,7 @@ module.exports = class Game {
 	}
 
 	compileResults() {
-		//letr use this to compile the results of the game
+		//later use this to compile the results of the game
 		return {};
 	}
 };

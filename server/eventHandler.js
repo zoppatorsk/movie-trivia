@@ -52,9 +52,8 @@ module.exports = function (io) {
 
 		socket.on('player-ready', (gameId) => {
 			const game = games.get(gameId);
-			//check the state of the game
 
-			//maybe we need to do something here later except reurn but probably not, this is just safeguard if socket reconnects n start sending shit
+			//maybe we need to do something here later except reurn but probably not, this is a safeguard if socket reconnects n start sending shit when game is in another state
 			if (game.status !== 'open' && game.status !== 'waiting-for-start') return;
 
 			//when player is ready shld.. change the ready variable of player
@@ -75,7 +74,6 @@ module.exports = function (io) {
 			if (game.howManyPlayersReady() !== game.players.size) return;
 			game.status = 'waiting-for-answer';
 			io.to(gameId).emit('round-start');
-			//we need to set the interval for countdown.. i think shld store this in the game object cuz i need to be able to clear it later from outside where it was started
 			game.startRoundCountDown(io, endRound);
 		});
 
@@ -86,8 +84,9 @@ module.exports = function (io) {
 			game.answers[game.round][socket.id] = answer;
 			//check if all players have answered
 			if (game.allPlayersHaveAnswered() == false) return;
-			//clear the interva for counting down as we now ends the round as all players have answered
+			//clear the interval for counting down as we now ends the round as all players have answered
 			game.clearRoundCountDown();
+			//run endRound logic
 			endRound(io, game);
 		});
 
