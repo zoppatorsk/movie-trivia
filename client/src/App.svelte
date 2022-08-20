@@ -31,32 +31,23 @@
 	});
 
 	socket.on('count-down', (count) => {
-		console.log('co', currentCount);
 		currentCount = count;
 	});
 
 	socket.on('ready-round', () => {
-		console.log('ready-round');
-		//here shld show some loader compnent
 		socket.emit('player-ready-round', $gameProps.id);
 	});
 
 	socket.on('round-start', () => {
-		console.log('round-start');
 		$activeComponent = 'question';
 	});
 
 	socket.on('end-round', () => {
-		console.log('end round, show results');
 		$activeComponent = 'roundresult';
-		//socket.emit('round-started', $gameProps.id);
-		//new player joined so at it to the store
 	});
+
 	socket.on('end-game', () => {
-		console.log('end game, show results');
 		$activeComponent = 'gameresult';
-		//socket.emit('round-started', $gameProps.id);
-		//new player joined so at it to the store
 	});
 </script>
 

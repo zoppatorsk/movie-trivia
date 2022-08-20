@@ -7,7 +7,7 @@ module.exports = class Game {
 		this.rounds = rounds;
 		this.round = 1;
 		this.waitBetweenRounds = 5;
-		this.roundTime = 5;
+		this.roundTime = 30;
 		this.status = 'open';
 		this.players = new Map();
 		this.roundCountDown = null; //will hold the interval timer for the round
@@ -28,6 +28,7 @@ module.exports = class Game {
 
 	clearRoundCountDown() {
 		clearInterval(this.roundCountDown);
+		this.roundCountDown = null;
 	}
 
 	join(player) {
