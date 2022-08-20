@@ -82,7 +82,8 @@ module.exports = function (io) {
 		socket.on('answer', (gameId, answer) => {
 			const game = games.get(gameId);
 			if (game.status !== 'waiting-for-answer') return;
-			//store the answer
+			//store the answer.. for now it's stored in the game object as an object
+			game.answers[game.round][socket.id] = answer;
 			//check if all players have answered
 			if (game.allPlayersHaveAnswered() == false) return;
 			//clear the interva for counting down as we now ends the round as all players have answered
@@ -128,8 +129,9 @@ function endRound(io, game) {
 		game.status = 'end-game';
 		io.to(game.id).emit('end-game', game.compileResults());
 		games.delete(game.id);
+	} else {
+		game.status = 'end-round';
+		io.to(game.id).emit('end-round'); //need to send with some reuslts oater
+		getReady(io, game);
 	}
-	game.status = 'end-round';
-	io.to(gameId).emit('end-round'); //need to send with some reuslts oater
-	getReady(io, game);
 }

@@ -1,16 +1,17 @@
 const { nanoid } = require('nanoid');
 
 module.exports = class Game {
-	constructor({ maxPlayers = 5, rounds = 3 } = {}) {
+	constructor({ maxPlayers = 5, rounds = 2 } = {}) {
 		this.id = nanoid();
 		this.maxPlayers = maxPlayers;
 		this.rounds = rounds;
 		this.round = 1;
 		this.waitBetweenRounds = 5;
-		this.roundTime = 10;
+		this.roundTime = 5;
 		this.status = 'open';
 		this.players = new Map();
 		this.roundCountDown = null; //will hold the interval timer for the round
+		this.answers = { 1: {}, 2: {}, 3: {} }; //for now just store answers here.
 	}
 
 	startRoundCountDown(io, func) {
@@ -55,7 +56,13 @@ module.exports = class Game {
 		return ready;
 	}
 	allPlayersHaveAnswered() {
-		return false;
+		let noAnswers = 0;
+		this.players.forEach((player) => {
+			if (this.answers?.[this.round]?.[player.id] !== undefined) {
+				noAnswers++;
+			}
+		});
+		return noAnswers === this.players.size;
 	}
 
 	getPublicData() {

@@ -5,6 +5,7 @@
 	import Lobby from './components/Lobby.svelte';
 	import Question from './components/Question.svelte';
 	import RoundResult from './components/RoundResult.svelte';
+	import GameResult from './components/GameResult.svelte';
 
 	let currentCount = 0;
 
@@ -34,16 +35,26 @@
 		currentCount = count;
 	});
 
-	socket.on('start-round', () => {
-		console.log('start round');
+	socket.on('ready-round', () => {
+		console.log('ready-round');
+		//here shld show some loader compnent
+		socket.emit('player-ready-round', $gameProps.id);
+	});
+
+	socket.on('round-start', () => {
+		console.log('round-start');
 		$activeComponent = 'question';
-		socket.emit('round-started', $gameProps.id);
-		//new player joined so at it to the store
 	});
 
 	socket.on('end-round', () => {
 		console.log('end round, show results');
 		$activeComponent = 'roundresult';
+		//socket.emit('round-started', $gameProps.id);
+		//new player joined so at it to the store
+	});
+	socket.on('end-game', () => {
+		console.log('end game, show results');
+		$activeComponent = 'gameresult';
 		//socket.emit('round-started', $gameProps.id);
 		//new player joined so at it to the store
 	});
@@ -58,9 +69,12 @@
 		<Lobby {socket} {currentCount} />
 	{/if}
 	{#if $activeComponent === 'question'}
-		<Question {currentCount} />
+		<Question {currentCount} {socket} />
 	{/if}
 	{#if $activeComponent === 'roundresult'}
 		<RoundResult {currentCount} />
+	{/if}
+	{#if $activeComponent === 'gameresult'}
+		<GameResult />
 	{/if}
 </main>
