@@ -76,6 +76,7 @@ module.exports = function (io) {
 			game.status = 'waiting-for-answer';
 			io.to(gameId).emit('round-start');
 			//we need to set the interval for countdown.. i think shld store this in the game object cuz i need to be able to clear it later from outside where it was started
+			game.startRoundCountDown(io, endRound);
 		});
 
 		socket.on('answer', (gameId, answer) => {
@@ -84,39 +85,11 @@ module.exports = function (io) {
 			//store the answer
 			//check if all players have answered
 			if (game.allPlayersHaveAnswered() == false) return;
-			//clear the interval
-
-			//this code shld be in a function as it will also need to be run if not all have answered and time runs out
-			game.round++;
-			if (game.round > game.rounds) {
-				game.status = 'end-game';
-				io.to(gameId).emit('end-game', game.results);
-				games.delete(gameId);
-			}
-			game.status = 'end-round';
-			io.to(gameId).emit('end-round'); //need to send with some reuslts
-			getReady(io, game);
+			//clear the interva for counting down as we now ends the round as all players have answered
+			game.clearRoundCountDown();
+			endRound(io, game);
 		});
 
-		// socket.on('round-started', (gameId) => {
-		// 	//later need to break some of this out into a function and re run on depending on status when a player disconnects
-		// 	const game = games.get(gameId);
-		// 	game.players.get(socket.id).ready = true; //set player ready to true
-		// 	let readyCount = 0;
-		// 	for (const [id, player] of game.players.entries()) {
-		// 		if (player.ready) readyCount++;
-		// 	}
-		// 	if (readyCount < game.players.size) return; //return if all players are not ready
-
-		// 	countDownRound(io, game); //start the countdown for the round
-		// 	game.status = 'round started';
-		// 	//reset the ready status
-		// 	for (const [id, player] of game.players.entries()) {
-		// 		player.ready = false;
-		// 	}
-		// });
-
-		//just a testing function so can check on various thins
 		socket.on('test', () => {
 			console.log(games);
 		});
@@ -146,4 +119,17 @@ function getReady(io, game) {
 			io.to(gameId).emit('ready-round'); //here neeed to send with some junk later.. like question n metadata about it
 		}
 	}
+}
+
+function endRound(io, game) {
+	//this code shld be in a function as it will also need to be run if not all have answered and time runs out
+	game.round++;
+	if (game.round > game.rounds) {
+		game.status = 'end-game';
+		io.to(game.id).emit('end-game', game.compileResults());
+		games.delete(game.id);
+	}
+	game.status = 'end-round';
+	io.to(gameId).emit('end-round'); //need to send with some reuslts oater
+	getReady(io, game);
 }

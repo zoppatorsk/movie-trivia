@@ -10,7 +10,23 @@ module.exports = class Game {
 		this.roundTime = 10;
 		this.status = 'open';
 		this.players = new Map();
-		this.results = 'think about later';
+		this.roundCountDown = null; //will hold the interval timer for the round
+	}
+
+	startRoundCountDown(io, func) {
+		let count = this.roundTime + 1;
+		this.roundCountDown = setInterval(() => {
+			count--;
+			io.to(this.id).emit('count-down', count);
+			if (count === 0) {
+				this.clearRoundCountDown();
+				func(io, this);
+			}
+		}, 1000);
+	}
+
+	clearRoundCountDown() {
+		clearInterval(this.roundCountDown);
 	}
 
 	join(player) {
@@ -59,5 +75,10 @@ module.exports = class Game {
 			playersArr.push({ ...player });
 		});
 		return playersArr;
+	}
+
+	compileResults() {
+		//letr use this to compile the results of the game
+		return {};
 	}
 };
