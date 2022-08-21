@@ -2,6 +2,7 @@
 	import { players, gameProps } from '../lib/stores';
 	export let socket;
 	export let currentCount;
+
 	let clicked = false;
 	console.log('p', $players);
 
@@ -14,9 +15,7 @@
 <div class="component-wrapper">
 	<h1>Lobby</h1>
 	<h2>{$gameProps.id}</h2>
-	{#if currentCount > 0}
-		<h2>{currentCount}</h2>
-	{/if}
+
 	<div class="player-wrapper">
 		{#each $players as player}
 			<div>
@@ -27,6 +26,9 @@
 	</div>
 
 	<button on:click|once={playerReady} disabled={clicked}>Ready</button>
+	<progress value={currentCount} max="5" />
+
+	<h2>{currentCount > 0 ? currentCount : 'Waiting'}</h2>
 </div>
 
 <style>

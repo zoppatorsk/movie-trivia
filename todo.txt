@@ -1,4 +1,22 @@
-Client
 
+
+
+Client
+- build results component
+- build end game component
+- build game list component
+- build some question components
+- build chat component
+- build loading component
 
 Server
+
+- scoring system
+- questions generator
+- send round results to client
+- send game results to client
+- on handler for request of game list
+- add game chat
+
+- move the round scores to player object inside game object?
+(makes handling easier. As is now score for a player could be kept even if they disconnect, but thinking about it I actuall dont know if want that anymore)

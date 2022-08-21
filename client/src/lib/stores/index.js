@@ -9,5 +9,5 @@ export const players = writable([
 	// { name: 'Player 4', avatar: 'https://avatars.dicebear.com/api/avataaars/:Playsdfsdfer2.svg' },
 	// { name: 'Benke bananen', avatar: 'https://avatars.dicebear.com/api/avataaars/:Pladddyer2.svg' },
 ]);
-export const gameProps = writable({ id: '' });
+export const gameProps = writable({ id: '', waitBetweenRounds: 5, roundTime: 30 });
 export const playerId = writable('');

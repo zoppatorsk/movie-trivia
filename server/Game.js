@@ -81,6 +81,8 @@ module.exports = class Game {
 			id: this.id,
 			round: this.round,
 			rounds: this.rounds,
+			waitBetweenRound: this.waitBetweenRounds,
+			roundTime: this.roundTime,
 			status: this.status,
 		};
 	}
