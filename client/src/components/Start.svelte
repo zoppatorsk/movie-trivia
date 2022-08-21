@@ -13,7 +13,7 @@
 		if (player !== null) {
 			player = JSON.parse(player);
 			// @ts-ignore
-			playername = player?.name || ''; //these safegualts are really not needed i guess
+			playername = player?.name || ''; //these safeguards are really not needed i guess
 			// @ts-ignore
 			seed = player?.seed || '';
 		}

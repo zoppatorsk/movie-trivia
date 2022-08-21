@@ -7,8 +7,9 @@
 	import RoundResult from './components/RoundResult.svelte';
 	import GameResult from './components/GameResult.svelte';
 
-	let currentCount = 0;
-
+	let currentCount = -1;
+	let currentQuestion = {};
+	let roundResults = [];
 	let connected = '';
 	//do we need to put stuff in onmount?? guess will find out later..
 
@@ -34,15 +35,20 @@
 		currentCount = count;
 	});
 
-	socket.on('ready-round', () => {
+	socket.on('ready-round', (question) => {
+		console.log('q', question);
+		currentQuestion = question;
 		socket.emit('player-ready-round', $gameProps.id);
 	});
 
 	socket.on('round-start', () => {
+		//later determine by type what question componneet to use
 		$activeComponent = 'question';
 	});
 
-	socket.on('end-round', () => {
+	socket.on('end-round', (results) => {
+		roundResults = results;
+		console.log('round results', results);
 		$activeComponent = 'roundresult';
 	});
 
@@ -59,10 +65,10 @@
 		<Lobby {socket} {currentCount} />
 	{/if}
 	{#if $activeComponent === 'question'}
-		<Question {currentCount} {socket} />
+		<Question {currentCount} {socket} question={currentQuestion} />
 	{/if}
 	{#if $activeComponent === 'roundresult'}
-		<RoundResult {currentCount} />
+		<RoundResult {currentCount} {roundResults} />
 	{/if}
 	{#if $activeComponent === 'gameresult'}
 		<GameResult />

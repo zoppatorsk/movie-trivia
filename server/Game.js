@@ -1,18 +1,20 @@
 const { nanoid } = require('nanoid');
 
 module.exports = class Game {
-	constructor({ maxPlayers = 5, rounds = 2 } = {}) {
+	constructor({ maxPlayers = 5, rounds = 3 } = {}) {
 		this.id = nanoid();
 		this.maxPlayers = maxPlayers;
 		this.rounds = rounds;
 		this.round = 1;
 		this.waitBetweenRounds = 5;
+		//this.waitBetweenRounds = 2;
 		this.roundTime = 30;
 		this.currentRoundTime = this.roundTime; //this is used to keep track of the time left in the round and only used for scoring system
 		this.status = 'open';
 		this.players = new Map();
 		this.roundCountDown = null; //will hold the interval timer for the round
-		this.answers = { 1: {}, 2: {}, 3: {} }; //for now just store answers here in hardcoded way, probably wld be better if stored in player object.
+		//this.answers = { 1: {}, 2: {}, 3: {} }; //for now just store answers here in hardcoded way, probably wld be better if stored in player object.
+		this.questions = [];
 	}
 
 	startRoundCountDown(io, func) {
@@ -20,11 +22,10 @@ module.exports = class Game {
 		let count = this.roundTime + 1;
 
 		const countDown = () => {
-			console.log(this);
 			if (!this || this.players.size < 1) clearInterval(this.roundCountDown); //safe guard so interval is cleared if game is deleted
 			count--;
 			this.currentRoundTime = count;
-			console.log(count);
+
 			io.to(this.id).emit('count-down', count);
 			if (count === 0) {
 				this.clearRoundCountDown();
@@ -41,6 +42,14 @@ module.exports = class Game {
 		this.roundCountDown = null;
 	}
 
+	getNextQuestion() {
+		return {
+			question: this.questions[this.round - 1].question,
+			answers: this.questions[this.round - 1].answers,
+			type: this.questions[this.round - 1].type,
+		};
+	}
+
 	join(player) {
 		//check if plyer is allowed to join
 		if (this.status === 'open' && this.players.size < this.maxPlayers) {
@@ -52,6 +61,23 @@ module.exports = class Game {
 
 	leave(playerid) {
 		this.players.delete(playerid);
+	}
+
+	addDnaIfNeeded() {
+		this.players.forEach((player) => {
+			console.log('a', player.answers);
+			console.log('round', this.round);
+			if (!player.answers[this.round - 1]) player.answers[this.round - 1] = 'DNA';
+		});
+	}
+
+	compileAnswers() {
+		this.addDnaIfNeeded();
+		let answers = [];
+		this.players.forEach((player) => {
+			answers.push({ id: player.id, answer: player.answers[this.round - 1], answerCorrect: player.answers[this.round - 1] === this.questions[this.round - 1].correctAnswer ? true : false });
+		});
+		return answers;
 	}
 
 	resetPlayerReady() {
@@ -67,9 +93,16 @@ module.exports = class Game {
 		return ready;
 	}
 	allPlayersHaveAnswered() {
+		//let noAnswers = 0;
+		// this.players.forEach((player) => {
+		// 	if (this.answers?.[this.round]?.[player.id] !== undefined) {
+		// 		noAnswers++;
+		// 	}
+		// });
+		// return noAnswers === this.players.size;
 		let noAnswers = 0;
 		this.players.forEach((player) => {
-			if (this.answers?.[this.round]?.[player.id] !== undefined) {
+			if (player.answers[this.round - 1] !== undefined) {
 				noAnswers++;
 			}
 		});

@@ -1,8 +1,52 @@
 <script>
 	export let currentCount;
+	export let roundResults;
+	import { players } from '../lib/stores';
 </script>
 
-<h2>Here should be results from round</h2>
+<h2>Round Results</h2>
+<div class="player-wrapper">
+	{#each $players as player}
+		<div>
+			<img src={player.avatar} alt="avatar" />
+			<p>{player.name}</p>
+			<p>{roundResults.find((x) => x.id == player.id).answer} <span>{roundResults.find((x) => x.id == player.id).answerCorrect ? '✔' : '❌'} </span></p>
+		</div>
+	{/each}
+</div>
 {#if currentCount > 0}
 	<h2>{currentCount}</h2>
 {/if}
+
+<style>
+	h2 {
+		text-align: center;
+	}
+	img {
+		margin-left: auto;
+		margin-right: auto;
+		display: block;
+		width: 200px;
+	}
+	.player-wrapper {
+		text-align: center;
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: row;
+		justify-content: space-evenly;
+		align-items: center;
+	}
+
+	@media screen and (max-width: 700px) {
+		.player-wrapper {
+			text-align: center;
+
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+		img {
+			max-height: 50px;
+		}
+	}
+</style>

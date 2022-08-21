@@ -7,5 +7,6 @@ module.exports = class Player {
 		this.id = id;
 		this.ready = false;
 		this.avatar = avatar;
+		this.answers = [];
 	}
 };

@@ -1,6 +1,7 @@
 const Game = require('./Game');
 const Player = require('./Player');
 const { quickPlay } = require('./modules/functions');
+const generateQuestions = require('./modules/generateQuestions');
 const games = new Map(); //use a map to store all the games so can easily access them by id
 
 module.exports = function (io) {
@@ -15,7 +16,7 @@ module.exports = function (io) {
 		});
 
 		//data should hold player details n game settings, just omitt for now and run on default settings
-		socket.on('create-game', function (data, callback) {
+		socket.on('create-game', async function (data, callback) {
 			const game = new Game(); //create the game
 			const player = new Player({ id: socket.id, name: data.name, avatar: `https://avatars.dicebear.com/api/avataaars/:${data.avatar}.svg` }); //create the player
 			game.join(player); //add the player to the game
@@ -23,7 +24,7 @@ module.exports = function (io) {
 			socket.join(game.id); //join the socket into a room for the game.. roomname is same as game.id
 
 			//-----here we should create the questions that the game will use
-
+			game.questions = await generateQuestions(game.rounds);
 			//this should take the player to the lobby.
 			callback({ status: 'ok', playerId: player.id, gameData: game.getPublicData(), players: game.getPlayersAsArray() });
 		});
@@ -74,8 +75,10 @@ module.exports = function (io) {
 		socket.on('answer', (gameId, answer) => {
 			const game = games.get(gameId);
 			if (game.status !== 'waiting-for-answer') return;
-			//store the answer.. for now it's stored in the game object as an object
-			game.answers[game.round][socket.id] = answer;
+			if (game.players.get(socket.id).answers[game.round - 1]) return; //if player has already answered then return
+			console.log('setting anaswer for player ');
+			game.players.get(socket.id).answers[game.round - 1] = answer;
+			console.log('as', game.players.get(socket.id).answers);
 			shouldEndRound(io, game);
 		});
 
@@ -94,11 +97,11 @@ function getReady(io, game) {
 	const countdown = (gameId) => {
 		if (!games.get(gameId) || games.get(gameId).players.size < 1) clearInterval(counter); //if game has been deleted or no players then stop the countdown
 		count--;
-		console.log(count);
+
 		io.to(gameId).emit('count-down', count);
 		if (count == 0) {
 			clearInterval(counter);
-			io.to(gameId).emit('ready-round'); //here neeed to send with some junk later.. like question n metadata about it
+			io.to(gameId).emit('ready-round', games.get(gameId).getNextQuestion());
 		}
 	};
 	countdown(game.id); //run the countdown once so do not have to wait 1 sec before counter starting
@@ -107,14 +110,16 @@ function getReady(io, game) {
 
 function endRound(io, game) {
 	//this code shld be in a function as it will also need to be run if not all have answered and time runs out
-	game.round++;
-	if (game.round > game.rounds) {
+
+	if (game.round == game.rounds) {
 		game.status = 'end-game';
 		io.to(game.id).emit('end-game', game.compileResults());
 		games.delete(game.id);
 	} else {
 		game.status = 'end-round';
-		io.to(game.id).emit('end-round'); //need to send with some reuslts oater
+		const playerAnswers = game.compileAnswers();
+		io.to(game.id).emit('end-round', playerAnswers);
+		game.round++;
 		getReady(io, game);
 	}
 }
@@ -144,7 +149,7 @@ function disconnecting(io, socket, games) {
 	//check if player is in a game and if so remove them from the game..
 	if (socket.rooms.size > 1) {
 		for (const room of socket.rooms) {
-			//seems a room can be undefined for a period of time, so had to check for that too
+			//seems stuff can be undefined for some time so added a check for this too.
 			if (room !== socket.id && games.get(room) !== undefined) {
 				const game = games.get(room);
 				game?.leave(socket.id);
@@ -154,7 +159,7 @@ function disconnecting(io, socket, games) {
 				else {
 					//notify the other players that the player has left the game
 					io.to(game.id).emit('player-left', socket.id);
-					//-----chek the state of the game and finish round if all other playeres have asnwered
+					//-----chek the state of the game and run needed function
 					switch (game.status) {
 						case 'waiting-for-start':
 							shouldGameStart(io, game);
