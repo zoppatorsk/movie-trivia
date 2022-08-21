@@ -89,9 +89,9 @@ function getReady(io, game) {
 	game.status = 'get-ready';
 	game.resetPlayerReady();
 	let count = game.waitBetweenRounds + 1;
-	const counter = setInterval(countdown, 1000, game.id);
+	let counter;
 
-	function countdown(gameId) {
+	const countdown = (gameId) => {
 		if (!games.get(gameId) || games.get(gameId).players.size < 1) clearInterval(counter); //if game has been deleted or no players then stop the countdown
 		count--;
 		console.log(count);
@@ -100,7 +100,9 @@ function getReady(io, game) {
 			clearInterval(counter);
 			io.to(gameId).emit('ready-round'); //here neeed to send with some junk later.. like question n metadata about it
 		}
-	}
+	};
+	countdown(game.id); //run the countdown once so do not have to wait 1 sec before counter starting
+	counter = setInterval(countdown, 1000, game.id);
 }
 
 function endRound(io, game) {

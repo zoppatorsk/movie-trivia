@@ -8,6 +8,7 @@ module.exports = class Game {
 		this.round = 1;
 		this.waitBetweenRounds = 5;
 		this.roundTime = 30;
+		this.currentRoundTime = this.roundTime; //this is used to keep track of the time left in the round and only used for scoring system
 		this.status = 'open';
 		this.players = new Map();
 		this.roundCountDown = null; //will hold the interval timer for the round
@@ -15,17 +16,24 @@ module.exports = class Game {
 	}
 
 	startRoundCountDown(io, func) {
+		this.currentRoundTime = this.roundTime; //reset the current round time so will be accurate when starting the round
 		let count = this.roundTime + 1;
-		this.roundCountDown = setInterval(() => {
+
+		const countDown = () => {
+			console.log(this);
 			if (!this || this.players.size < 1) clearInterval(this.roundCountDown); //safe guard so interval is cleared if game is deleted
 			count--;
+			this.currentRoundTime = count;
 			console.log(count);
 			io.to(this.id).emit('count-down', count);
 			if (count === 0) {
 				this.clearRoundCountDown();
 				func(io, this);
 			}
-		}, 1000);
+		};
+
+		countDown(); //run function once so do not have to wait for interval to start (i.e. no 1 second delay before first emit)
+		this.roundCountDown = setInterval(countDown, 1000);
 	}
 
 	clearRoundCountDown() {
