@@ -10,6 +10,7 @@
 		clicked = true;
 		socket.emit('player-ready', $gameProps.id);
 	}
+	console.log($gameProps);
 </script>
 
 <div class="component-wrapper">
@@ -26,7 +27,7 @@
 	</div>
 
 	<button on:click|once={playerReady} disabled={clicked}>Ready</button>
-	<progress value={currentCount} max="5" />
+	<progress value={currentCount} max={$gameProps.waitBetweenRound} />
 
 	<h2>{currentCount > 0 ? currentCount : 'Waiting'}</h2>
 </div>

@@ -4,20 +4,22 @@
 	import { activeComponent, players, gameProps, playerId } from '../lib/stores';
 	export let socket;
 
+	let playername = '';
+	let seed = '';
+
+	//get player name and seed from localstorage
 	onMount(() => {
 		let player = localStorage.getItem('player');
 		if (player !== null) {
 			player = JSON.parse(player);
 			// @ts-ignore
-			playername = player?.name || '';
+			playername = player?.name || ''; //these safegualts are really not needed i guess
 			// @ts-ignore
 			seed = player?.seed || '';
 		}
 	});
 
-	let playername = '';
-	let seed = '';
-
+	//set player name and seed to localstorage when it chages
 	$: {
 		if (playername || seed) localStorage.setItem('player', JSON.stringify({ name: playername, seed: seed }));
 	}
