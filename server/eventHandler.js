@@ -142,6 +142,7 @@ function disconnecting(io, socket, games) {
 	//check if player is in a game and if so remove them from the game..
 	if (socket.rooms.size > 1) {
 		for (const room of socket.rooms) {
+			//seems a room can be undefined for a period of time, so had to check for that too
 			if (room !== socket.id && games.get(room) !== undefined) {
 				const game = games.get(room);
 				game?.leave(socket.id);
