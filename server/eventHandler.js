@@ -11,7 +11,7 @@ module.exports = function (io) {
 
 		//use disconnecting instead of discconnect so still have access to room of socket n stuff
 		socket.on('disconnecting', () => {
-			disconnecting(socket, games); //abstracted away the code into a function
+			disconnecting(io, socket, games); //abstracted away the code into a function
 			console.log(socket.id + ' disconnecting');
 		});
 
@@ -80,7 +80,7 @@ module.exports = function (io) {
 
 		socket.on('answer', (gameId, answer) => {
 			const game = games.get(gameId);
-			const player = game.players.get(socket.id);
+			const player = game?.players?.get(socket.id);
 			if (game.status !== 'waiting-for-answer') return;
 			if (player.answers[game.round - 1]) return; //if player has already answered then return
 
@@ -159,7 +159,7 @@ function shouldEndRound(io, game) {
 	endRound(io, game);
 }
 
-function disconnecting(socket, games) {
+function disconnecting(io, socket, games) {
 	//check if player is in a game and if so remove them from the game..
 	if (socket.rooms.size < 2) return;
 	for (const room of socket.rooms) {
