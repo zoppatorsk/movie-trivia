@@ -28,6 +28,8 @@ module.exports = function (io) {
 			console.log(game.questions);
 			//this should take the player to the lobby.
 			callback({ status: 'ok', playerId: player.id, gameData: game.getPublicData(), players: game.getPlayersAsArray() });
+
+			//later add a failed callback if game fails to create, ie. no questions found
 		});
 
 		//when a player want to joins a game
@@ -110,7 +112,7 @@ function getReady(io, game) {
 		io.to(gameId).emit('count-down', count);
 		if (count == 0) {
 			clearInterval(counter);
-			io.to(gameId).emit('ready-round', games.get(gameId).getNextQuestion());
+			io.to(gameId).emit('ready-round', games.get(gameId)?.getNextQuestion());
 		}
 	};
 	countdown(game.id); //run the countdown once so do not have to wait 1 sec before counter starting

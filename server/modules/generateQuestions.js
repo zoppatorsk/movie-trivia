@@ -1,18 +1,18 @@
+const axios = require('axios');
+const he = require('he');
 const PickOne = require('../questions/PickOne');
 module.exports = async function generateQuestions(no) {
-	const questions = [
-		{ question: 'What is the capital of the United States?', answers: ['Washington', 'New York', 'Los Angeles'], correctAnswer: 'Washington', type: 'pick-one' },
-		{ question: 'What is the capital of the United Kingdom?', answers: ['London', 'Manchester', 'Liverpool'], correctAnswer: 'London', type: 'pick-one' },
-		{ question: 'What is the capital of the Sweden?', answers: ['Stockholm', 'Oslo', 'Madrid'], correctAnswer: 'Stockholm', type: 'pick-one' },
-	];
+	try {
+		const { data } = await axios.get(`https://opentdb.com/api.php?amount=${no}&type=multiple`);
 
-	//select no random questions from the array
-	const selectedQuestions = [];
-	for (let i = 0; i < no; i++) {
-		const randomIndex = Math.floor(Math.random() * questions.length);
+		const selectedQuestions = [];
 
-		selectedQuestions.push(new PickOne(questions[randomIndex]));
+		data.results.forEach((element) => {
+			selectedQuestions.push(new PickOne({ question: he.decode(element.question), answers: element.incorrect_answers.concat(element.correct_answer), correctAnswer: element.correct_answer, type: 'pick-one' }));
+		});
+		return selectedQuestions;
+	} catch (error) {
+		console.log(error);
+		return [];
 	}
-
-	return selectedQuestions;
 };
