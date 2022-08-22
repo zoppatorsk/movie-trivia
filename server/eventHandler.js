@@ -15,7 +15,7 @@ module.exports = function (io) {
 			console.log(socket.id + ' disconnecting');
 		});
 
-		//socket.on('game-chat') = (msg, gameid) => {socket.to(games.get(gameid).id).emit('game-chat', msg)};
+		socket.on('game-chat', (msg, gameid) => socket.to(games.get(gameid).id).emit('game-chat', msg));
 		socket.on('global-chat', (msg, name) => socket.broadcast.emit('global-chat', msg, name));
 
 		//data should hold player details n game settings, just omitt for now and run on default settings
