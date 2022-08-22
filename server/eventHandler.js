@@ -11,9 +11,12 @@ module.exports = function (io) {
 
 		//use disconnecting instead of discconnect so still have access to room of socket n stuff
 		socket.on('disconnecting', () => {
-			disconnecting(io, socket, games); //abstracted away the code into a function
+			disconnecting(socket, games); //abstracted away the code into a function
 			console.log(socket.id + ' disconnecting');
 		});
+
+		//socket.on('game-chat') = (msg, gameid) => {socket.to(games.get(gameid).id).emit('game-chat', msg)};
+		socket.on('global-chat', (msg, name) => socket.broadcast.emit('global-chat', msg, name));
 
 		//data should hold player details n game settings, just omitt for now and run on default settings
 		socket.on('create-game', async function (data, callback) {
@@ -156,7 +159,7 @@ function shouldEndRound(io, game) {
 	endRound(io, game);
 }
 
-function disconnecting(io, socket, games) {
+function disconnecting(socket, games) {
 	//check if player is in a game and if so remove them from the game..
 	if (socket.rooms.size < 2) return;
 	for (const room of socket.rooms) {
@@ -169,7 +172,7 @@ function disconnecting(io, socket, games) {
 		if (game?.players.size === 0) games.delete(room);
 		else {
 			//notify the other players that the player has left the game
-			io.to(game.id).emit('player-left', socket.id);
+			socket.to(game.id).emit('player-left', socket.id);
 			//-----chek the state of the game and run needed function
 			switch (game.status) {
 				case 'waiting-for-start':

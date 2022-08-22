@@ -6,11 +6,13 @@
 	import Question from './components/Question.svelte';
 	import RoundResult from './components/RoundResult.svelte';
 	import GameResult from './components/GameResult.svelte';
+	import Chat from './components/Chat.svelte';
 
 	let currentCount = -1;
 	let currentQuestion = {};
 	let roundResults;
 	let connected = '';
+	let message = '';
 	//do we need to put stuff in onmount?? guess will find out later..
 
 	const socket = io('http://localhost:3000');
@@ -55,9 +57,14 @@
 	socket.on('end-game', () => {
 		$activeComponent = 'gameresult';
 	});
+	socket.on('global-chat', (m) => {
+		console.log('got global chat', m);
+		message = m;
+	});
 </script>
 
 <div>
+	<!-- <Chat {socket} {message} /> -->
 	{#if $activeComponent === 'start'}
 		<Start {socket} />
 	{/if}
