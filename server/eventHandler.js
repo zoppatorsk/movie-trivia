@@ -25,6 +25,7 @@ module.exports = function (io) {
 
 			//-----here we should create the questions that the game will use
 			game.questions = await generateQuestions(game.rounds);
+			console.log(game.questions);
 			//this should take the player to the lobby.
 			callback({ status: 'ok', playerId: player.id, gameData: game.getPublicData(), players: game.getPlayersAsArray() });
 		});
@@ -74,11 +75,19 @@ module.exports = function (io) {
 
 		socket.on('answer', (gameId, answer) => {
 			const game = games.get(gameId);
+			const player = game.players.get(socket.id);
 			if (game.status !== 'waiting-for-answer') return;
-			if (game.players.get(socket.id).answers[game.round - 1]) return; //if player has already answered then return
-			console.log('setting anaswer for player ');
-			game.players.get(socket.id).answers[game.round - 1] = answer;
-			console.log('as', game.players.get(socket.id).answers);
+			if (player.answers[game.round - 1]) return; //if player has already answered then return
+
+			const question = game.questions[game.round - 1];
+
+			//set the answer for the player
+			player.answers[game.round - 1] = {
+				answer,
+				correct: question.isAnswerCorrect(answer),
+				score: question.calculateScore(answer, game.currentRoundTime),
+			};
+
 			shouldEndRound(io, game);
 		});
 
@@ -118,7 +127,7 @@ function endRound(io, game) {
 	} else {
 		game.status = 'end-round';
 		const playerAnswers = game.compileAnswers();
-		io.to(game.id).emit('end-round', playerAnswers);
+		io.to(game.id).emit('end-round', Array.from(playerAnswers)); //cant send answer as map so convert to array
 		game.round++;
 		getReady(io, game);
 	}

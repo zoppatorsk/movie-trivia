@@ -9,7 +9,7 @@ module.exports = class Game {
 		this.waitBetweenRounds = 5;
 		//this.waitBetweenRounds = 2;
 		this.roundTime = 30;
-		this.currentRoundTime = this.roundTime; //this is used to keep track of the time left in the round and only used for scoring system
+		this.currentRoundTime = this.roundTime; //this is used to keep track of the time left in the round and only used for scoring system, counts down with round.
 		this.status = 'open';
 		this.players = new Map();
 		this.roundCountDown = null; //will hold the interval timer for the round
@@ -42,11 +42,7 @@ module.exports = class Game {
 	}
 
 	getNextQuestion() {
-		return {
-			question: this.questions[this.round - 1].question,
-			answers: this.questions[this.round - 1].answers,
-			type: this.questions[this.round - 1].type,
-		};
+		return this.questions[this.round - 1];
 	}
 
 	join(player) {
@@ -62,21 +58,27 @@ module.exports = class Game {
 		this.players.delete(playerid);
 	}
 
-	addDnaIfNeeded() {
+	// addDnaIfNeeded() {
+	// 	this.players.forEach((player) => {
+	// 		console.log('a', player.answers);
+	// 		console.log('round', this.round);
+	// 		if (!player.answers[this.round - 1]) player.answers[this.round - 1] = 'DNA';
+	// 	});
+	// }
+	addAnswerForDNA() {
 		this.players.forEach((player) => {
-			console.log('a', player.answers);
-			console.log('round', this.round);
-			if (!player.answers[this.round - 1]) player.answers[this.round - 1] = 'DNA';
+			if (!player.answers[this.round - 1]) player.answers[this.round - 1] = { answer: '', correct: false, time: null, score: 0 };
 		});
 	}
 
 	compileAnswers() {
-		this.addDnaIfNeeded();
-		let answers = [];
+		this.addAnswerForDNA();
+		let compiledAnswers = new Map(); //create a map as will be easier to deal with on frontend
 		this.players.forEach((player) => {
-			answers.push({ id: player.id, answer: player.answers[this.round - 1], answerCorrect: player.answers[this.round - 1] === this.questions[this.round - 1].correctAnswer ? true : false });
+			const playerAnswer = player.answers[this.round - 1];
+			compiledAnswers.set(player.id, playerAnswer);
 		});
-		return answers;
+		return compiledAnswers;
 	}
 
 	resetPlayerReady() {
@@ -115,8 +117,7 @@ module.exports = class Game {
 	//easier to do stuff on frontend with players as an array instead of a map
 	getPlayersAsArray() {
 		let playersArr = [];
-		//convert the players map to an array.. this could probably be done cleaner and in one line but I am not used to working with maps
-		//this will probably be overhauled later
+		//overhaul later so only send info needed.
 		this.players.forEach((player) => {
 			playersArr.push({ ...player });
 		});

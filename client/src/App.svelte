@@ -9,7 +9,7 @@
 
 	let currentCount = -1;
 	let currentQuestion = {};
-	let roundResults = [];
+	let roundResults;
 	let connected = '';
 	//do we need to put stuff in onmount?? guess will find out later..
 
@@ -47,8 +47,8 @@
 	});
 
 	socket.on('end-round', (results) => {
-		roundResults = results;
-		console.log('round results', results);
+		roundResults = new Map(results); //recreate map from array
+		console.log('round results', results.size);
 		$activeComponent = 'roundresult';
 	});
 

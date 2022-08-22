@@ -1,3 +1,4 @@
+const PickOne = require('../questions/PickOne');
 module.exports = async function generateQuestions(no) {
 	const questions = [
 		{ question: 'What is the capital of the United States?', answers: ['Washington', 'New York', 'Los Angeles'], correctAnswer: 'Washington', type: 'pick-one' },
@@ -9,8 +10,9 @@ module.exports = async function generateQuestions(no) {
 	const selectedQuestions = [];
 	for (let i = 0; i < no; i++) {
 		const randomIndex = Math.floor(Math.random() * questions.length);
-		selectedQuestions.push(questions[randomIndex]);
+
+		selectedQuestions.push(new PickOne(questions[randomIndex]));
 	}
-	console.log('q', selectedQuestions);
+
 	return selectedQuestions;
 };
