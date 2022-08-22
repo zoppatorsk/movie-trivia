@@ -147,33 +147,31 @@ function shouldEndRound(io, game) {
 
 function disconnecting(io, socket, games) {
 	//check if player is in a game and if so remove them from the game..
-	if (socket.rooms.size > 1) {
-		for (const room of socket.rooms) {
-			//seems stuff can be undefined for some time so added a check for this too.
-			if (room !== socket.id && games.get(room) !== undefined) {
-				const game = games.get(room);
-				game?.leave(socket.id);
+	if (socket.rooms.size < 2) return;
+	for (const room of socket.rooms) {
+		//seems stuff can be undefined for some time so added a check for this too.
+		if (room == socket.id || games.get(room) == undefined) continue;
+		const game = games.get(room);
+		game?.leave(socket.id);
 
-				//delete room if empty
-				if (game?.players.size === 0) games.delete(room);
-				else {
-					//notify the other players that the player has left the game
-					io.to(game.id).emit('player-left', socket.id);
-					//-----chek the state of the game and run needed function
-					switch (game.status) {
-						case 'waiting-for-start':
-							shouldGameStart(io, game);
-							break;
-						case 'waiting-for-ready':
-							shouldStartRound(io, game);
-							break;
-						case 'waiting-for-answer':
-							shouldEndRound(io, game);
-							break;
-					}
-				}
-				break;
+		//delete room if empty
+		if (game?.players.size === 0) games.delete(room);
+		else {
+			//notify the other players that the player has left the game
+			io.to(game.id).emit('player-left', socket.id);
+			//-----chek the state of the game and run needed function
+			switch (game.status) {
+				case 'waiting-for-start':
+					shouldGameStart(io, game);
+					break;
+				case 'waiting-for-ready':
+					shouldStartRound(io, game);
+					break;
+				case 'waiting-for-answer':
+					shouldEndRound(io, game);
+					break;
 			}
 		}
+		break;
 	}
 }

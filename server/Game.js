@@ -13,7 +13,6 @@ module.exports = class Game {
 		this.status = 'open';
 		this.players = new Map();
 		this.roundCountDown = null; //will hold the interval timer for the round
-		//this.answers = { 1: {}, 2: {}, 3: {} }; //for now just store answers here in hardcoded way, probably wld be better if stored in player object.
 		this.questions = [];
 	}
 
@@ -93,13 +92,6 @@ module.exports = class Game {
 		return ready;
 	}
 	allPlayersHaveAnswered() {
-		//let noAnswers = 0;
-		// this.players.forEach((player) => {
-		// 	if (this.answers?.[this.round]?.[player.id] !== undefined) {
-		// 		noAnswers++;
-		// 	}
-		// });
-		// return noAnswers === this.players.size;
 		let noAnswers = 0;
 		this.players.forEach((player) => {
 			if (player.answers[this.round - 1] !== undefined) {
