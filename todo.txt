@@ -2,11 +2,11 @@
 
 
 Client
-- build results component
-- build end game component
-- build game list component
-- build some question components
-- build chat component
+- build results component -started
+- build end game component -started
+- build game list component -started
+- build some question components -started
+- build chat component -started
 - build loading component
 - create game settings component
 
@@ -14,14 +14,13 @@ Client
 
 Server
 
-- scoring system
-- questions generator
-- send round results to client
+- scoring system -example done
+- questions generator -example done
+- send round results to client -done
 - send game results to client
-- on handler for request of game list
-- add game chat
+- on handler for request of game list -done
+- add game chat -started
 
 - preload logic for questions
 
-- move the round scores to player object inside game object?
-(makes handling easier. As is now score for a player could be kept even if they disconnect, but thinking about it I actuall dont know if want that anymore)
+- move the round scores to player object inside game object? - done
