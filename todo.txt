@@ -17,7 +17,7 @@ Server
 - scoring system -example done
 - questions generator -example done
 - send round results to client -done
-- send game results to client
+- send game results to client -done
 - on handler for request of game list -done
 - add game chat -started
 
