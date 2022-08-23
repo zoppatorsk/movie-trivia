@@ -136,7 +136,18 @@ module.exports = class Game {
 	}
 
 	compileResults() {
-		//later use this to compile the results of the game
-		return {};
+		//what shld i really send??
+		let results = {};
+		results.lastRound = this.compileAnswers(); //last round answers
+		let score = new Map();
+		//add score from all rounds into score set with player id as key and score as value
+		this.players.forEach((player) => {
+			score.set(
+				player.id,
+				player.answers.map((a) => a.score).reduce((a, b) => a + b) //map to array and reduce into a single value
+			);
+		});
+		results.score = Array.from(score); //transform map into array so can be sent to frontend (cant send Map over socket)
+		return results;
 	}
 };
