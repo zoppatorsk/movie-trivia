@@ -1,7 +1,7 @@
 const { nanoid } = require('nanoid');
 
 module.exports = class Game {
-	constructor({ maxPlayers = 5, rounds = 3 } = {}) {
+	constructor({ maxPlayers = 5, rounds = 1 } = {}) {
 		this.id = nanoid();
 		this.maxPlayers = maxPlayers;
 		this.rounds = rounds;
@@ -147,7 +147,24 @@ module.exports = class Game {
 				player.answers.map((a) => a.score).reduce((a, b) => a + b) //map to array and reduce into a single value
 			);
 		});
+		results.placement = Array.from(this.playerPlacement(score)); //order of players in game by score convereted to array
 		results.score = Array.from(score); //transform map into array so can be sent to frontend (cant send Map over socket)
+		results.players = this.getPlayersAsArray(); //send with players if want to show some more info, and also if player dissconnects we still have all the info n can display it.
+
 		return results;
+	}
+	playerPlacement(score) {
+		//where the key is the player id and the value is the rank
+		//thank u co-pilot for making this logic for me.. ;)
+		let rank = new Map();
+		let sorted = [...score.entries()].sort((a, b) => b[1] - a[1]);
+		let rankCounter = 1;
+		for (let i = 0; i < sorted.length; i++) {
+			if (i == 0 || sorted[i][1] != sorted[i - 1][1]) {
+				rankCounter = i + 1;
+			}
+			rank.set(sorted[i][0], rankCounter);
+		}
+		return rank;
 	}
 };

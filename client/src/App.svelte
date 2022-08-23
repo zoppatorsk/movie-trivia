@@ -14,6 +14,7 @@
 	let roundResults;
 	let connected = '';
 	let message = '';
+	let gameResults = {};
 	let games = [
 		{ name: 'test1', players: 2, maxPlayers: 4, rounds: 3 },
 		{ name: 'test2', players: 2, maxPlayers: 4, rounds: 3 },
@@ -63,8 +64,13 @@
 		$activeComponent = 'roundresult';
 	});
 
-	socket.on('end-game', () => {
+	socket.on('end-game', (results) => {
+		gameResults = { ...results };
+		gameResults.lastRound.answers = new Map(gameResults.lastRound.answers); //convert back to map
+		gameResults.score = new Map(gameResults.score); //convert back to map
+
 		$activeComponent = 'gameresult';
+		console.log('game results', gameResults);
 	});
 	socket.on('global-chat', (m) => {
 		console.log('got global chat', m);
@@ -87,7 +93,7 @@
 		<RoundResult {currentCount} {roundResults} />
 	{/if}
 	{#if $activeComponent === 'gameresult'}
-		<GameResult />
+		<GameResult results={gameResults} />
 	{/if}
 	{#if $activeComponent === 'GameList'}
 		<GameList {socket} />
