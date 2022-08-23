@@ -16,7 +16,18 @@ module.exports = function (io) {
 		});
 
 		socket.on('game-chat', (msg, gameid) => socket.to(games.get(gameid).id).emit('game-chat', msg));
-		socket.on('global-chat', (msg, name) => socket.broadcast.emit('global-chat', msg, name));
+		socket.on('global-chat', (msg, name) => socket.broadcast.emit('global-chat', msg, name, avatar));
+
+		socket.on('get-game-list', function (callback) {
+			const gameList = [];
+			for (const [id, game] of games.entries()) {
+				if (game.status == 'open' && game.players.size < game.maxPlayers) {
+					gameList.push({ id: game.id, name: game.name, players: game.players.size, maxPlayers: game.maxPlayers, rounds: game.rounds });
+				}
+			}
+			console.log(gameList);
+			callback(gameList);
+		});
 
 		//data should hold player details n game settings, just omitt for now and run on default settings
 		socket.on('create-game', async function (data, callback) {
@@ -65,8 +76,7 @@ module.exports = function (io) {
 
 			//when player is ready shld.. change the ready variable of player
 			game.players.get(socket.id).ready = true;
-			if (game.status !== 'waiting-for-start') game.status = 'waiting-for-start'; //now we do not accept any new players
-
+			if (game.status !== 'waiting-for-start') game.status = 'waiting-for-start';
 			shouldGameStart(io, game);
 		});
 
@@ -132,31 +142,30 @@ function endRound(io, game) {
 	} else {
 		game.status = 'end-round';
 		const playerAnswers = game.compileAnswers();
-		io.to(game.id).emit('end-round', Array.from(playerAnswers)); //cant send answer as map so convert to array
+		io.to(game.id).emit('end-round', playerAnswers);
 		game.round++;
 		getReady(io, game);
 	}
 }
 
 function shouldGameStart(io, game) {
-	//if half of players are not ready then just return
+	//if less than half of players are not ready then just return
 	if (game.howManyPlayersReady() < game.players.size / 2) return;
 	getReady(io, game);
 }
 
 function shouldStartRound(io, game) {
-	if (game.howManyPlayersReady() !== game.players.size) return;
+	if (game.howManyPlayersReady() !== game.players.size) return; //if not all players are ready then return
 	game.status = 'waiting-for-answer';
-	io.to(game.id).emit('round-start');
-	game.startRoundCountDown(io, endRound);
+	io.to(game.id).emit('round-start'); //start round
+	game.startRoundCountDown(io, endRound); //start the round countdown
 }
 
 function shouldEndRound(io, game) {
 	if (game.allPlayersHaveAnswered() == false) return;
-	//clear the interval for counting down as we now ends the round as all players have answered
-	game.clearRoundCountDown();
-	//run endRound logic
-	endRound(io, game);
+	game.clearRoundCountDown(); //clear the interval for counting down as we now ends the round as all players have answered
+
+	endRound(io, game); //run endRound logic
 }
 
 function disconnecting(io, socket, games) {

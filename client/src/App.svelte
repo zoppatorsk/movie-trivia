@@ -7,12 +7,20 @@
 	import RoundResult from './components/RoundResult.svelte';
 	import GameResult from './components/GameResult.svelte';
 	import Chat from './components/Chat.svelte';
+	import GameList from './components/GameList.svelte';
 
 	let currentCount = -1;
 	let currentQuestion = {};
 	let roundResults;
 	let connected = '';
 	let message = '';
+	let games = [
+		{ name: 'test1', players: 2, maxPlayers: 4, rounds: 3 },
+		{ name: 'test2', players: 2, maxPlayers: 4, rounds: 3 },
+		{ name: 'test2', players: 2, maxPlayers: 4, rounds: 3 },
+		{ name: 'test2', players: 2, maxPlayers: 4, rounds: 3 },
+		{ name: 'test2', players: 2, maxPlayers: 4, rounds: 3 },
+	];
 	//do we need to put stuff in onmount?? guess will find out later..
 
 	const socket = io('http://localhost:3000');
@@ -49,7 +57,8 @@
 	});
 
 	socket.on('end-round', (results) => {
-		roundResults = new Map(results); //recreate map from array
+		roundResults = { ...results };
+		roundResults.answers = new Map(roundResults.answers);
 		console.log('round results', results.size);
 		$activeComponent = 'roundresult';
 	});
@@ -79,5 +88,8 @@
 	{/if}
 	{#if $activeComponent === 'gameresult'}
 		<GameResult />
+	{/if}
+	{#if $activeComponent === 'GameList'}
+		<GameList {socket} />
 	{/if}
 </div>

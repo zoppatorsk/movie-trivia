@@ -14,6 +14,7 @@ module.exports = class Game {
 		this.players = new Map();
 		this.roundCountDown = null; //will hold the interval timer for the round
 		this.questions = [];
+		this.name = 'Game';
 	}
 
 	startRoundCountDown(io, func) {
@@ -72,12 +73,22 @@ module.exports = class Game {
 	}
 
 	compileAnswers() {
+		//later add correct answer n transform compiled answer into object instead
+		//just let this function be responsible for all the needed stuff n not split logic between game loop and game class
 		this.addAnswerForDNA();
-		let compiledAnswers = new Map(); //create a map as will be easier to deal with on frontend
+		let playerAnswers = new Map(); //create a map as will be easier to deal with on frontend
 		this.players.forEach((player) => {
 			const playerAnswer = player.answers[this.round - 1];
-			compiledAnswers.set(player.id, playerAnswer);
+			playerAnswers.set(player.id, playerAnswer);
 		});
+		//transform map into array so can be sent to frontend (cant send Map over socket)
+		playerAnswers = Array.from(playerAnswers);
+		const compiledAnswers = {};
+		//put in some more junk.
+		compiledAnswers.answers = playerAnswers;
+		compiledAnswers.round = this.round;
+		compiledAnswers.correctAnswer = this.questions[this.round - 1].correctAnswer;
+
 		return compiledAnswers;
 	}
 

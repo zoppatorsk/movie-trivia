@@ -58,7 +58,8 @@
 	}
 
 	function test() {
-		socket.emit('test');
+		//socket.emit('test');
+		activeComponent.set('GameList');
 	}
 </script>
 

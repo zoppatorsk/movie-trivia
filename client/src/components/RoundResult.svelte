@@ -11,9 +11,9 @@
 			<img src={player.avatar} alt="avatar" />
 			<p>{player.name}</p>
 			<!-- <p>{roundResults.find((x) => x.id == player.id).answer} <span>{roundResults.find((x) => x.id == player.id).correct ? '✔' : '❌'} </span></p> -->
-			<p>{roundResults.get(player.id).answer ? roundResults.get(player.id).answer : 'DNA'} <span>{roundResults.get(player.id).correct ? '✔' : '❌'} </span></p>
+			<p>{roundResults.answers.get(player.id).answer ? roundResults.answers.get(player.id).answer : 'DNA'} <span>{roundResults.answers.get(player.id).correct ? '✔' : '❌'} </span></p>
 
-			<p>{roundResults.get(player.id).score}</p>
+			<p>{roundResults.answers.get(player.id).score}</p>
 		</div>
 	{/each}
 </div>
