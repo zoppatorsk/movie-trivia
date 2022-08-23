@@ -12,6 +12,7 @@
 			<p>{results.lastRound.answers.get(player.id).answer ? results.lastRound.answers.get(player.id).answer : 'DNA'} <span>{results.lastRound.answers.get(player.id).correct ? '✔' : '❌'} </span></p>
 			<p>{results.lastRound.answers.get(player.id).score}</p>
 			<p>Game Results:</p>
+			<p>Place: {results.placement.get(player.id)}</p>
 			<p>{results.score.get(player.id)}</p>
 		</div>
 	{/each}

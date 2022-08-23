@@ -60,7 +60,6 @@
 	socket.on('end-round', (results) => {
 		roundResults = { ...results };
 		roundResults.answers = new Map(roundResults.answers);
-		console.log('round results', results.size);
 		$activeComponent = 'roundresult';
 	});
 
@@ -68,6 +67,8 @@
 		gameResults = { ...results };
 		gameResults.lastRound.answers = new Map(gameResults.lastRound.answers); //convert back to map
 		gameResults.score = new Map(gameResults.score); //convert back to map
+		gameResults.placement = new Map(gameResults.placement); //convert back to map
+		console.log('gameResults', gameResults.placement);
 
 		$activeComponent = 'gameresult';
 		console.log('game results', gameResults);

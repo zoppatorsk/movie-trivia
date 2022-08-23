@@ -155,7 +155,6 @@ module.exports = class Game {
 	}
 	playerPlacement(score) {
 		//where the key is the player id and the value is the rank
-		//thank u co-pilot for making this logic for me.. ;)
 		let rank = new Map();
 		let sorted = [...score.entries()].sort((a, b) => b[1] - a[1]);
 		let rankCounter = 1;
