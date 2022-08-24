@@ -5,6 +5,7 @@
 </script>
 
 <h2>Round Results</h2>
+<p class="correct-answer">{roundResults.correctAnswer}</p>
 <div class="player-wrapper">
 	{#each $players as player}
 		<div>
@@ -22,8 +23,12 @@
 {/if}
 
 <style>
+	.correct-answer {
+		text-align: center;
+	}
 	h2 {
 		text-align: center;
+		margin-bottom: 0px;
 	}
 	img {
 		margin-left: auto;

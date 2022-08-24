@@ -1,20 +1,20 @@
 const { nanoid } = require('nanoid');
 
 module.exports = class Game {
-	constructor({ maxPlayers = 5, rounds = 1 } = {}) {
+	constructor({ maxPlayers = 5, rounds = 1, roundTime = 30, name = 'epic game', waitBetweenRounds = 5 } = {}) {
 		this.id = nanoid();
 		this.maxPlayers = maxPlayers;
 		this.rounds = rounds;
 		this.round = 1;
-		this.waitBetweenRounds = 5;
+		this.waitBetweenRounds = waitBetweenRounds;
 		//this.waitBetweenRounds = 2;
-		this.roundTime = 30;
+		this.roundTime = roundTime;
 		this.currentRoundTime = this.roundTime; //this is used to keep track of the time left in the round and only used for scoring system, counts down with round.
 		this.status = 'open';
 		this.players = new Map();
 		this.roundCountDown = null; //will hold the interval timer for the round
 		this.questions = [];
-		this.name = 'Game';
+		this.name = name;
 	}
 
 	startRoundCountDown(io, func) {

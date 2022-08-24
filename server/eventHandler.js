@@ -16,7 +16,8 @@ module.exports = function (io) {
 		});
 
 		socket.on('game-chat', (msg, gameid) => socket.to(games.get(gameid).id).emit('game-chat', msg));
-		socket.on('global-chat', (msg, name) => socket.broadcast.emit('global-chat', msg, name, avatar));
+		//socket.on('global-chat', (msg, name) => socket.broadcast.emit('global-chat', msg, name, avatar));
+		socket.on('global-chat', (msg, name) => socket.broadcast.emit('global-chat', msg));
 
 		socket.on('get-game-list', function (callback) {
 			const gameList = [];
@@ -31,7 +32,8 @@ module.exports = function (io) {
 
 		//data should hold player details n game settings, just omitt for now and run on default settings
 		socket.on('create-game', async function (data, callback) {
-			const game = new Game(); //create the game
+			console.log('d', data);
+			const game = new Game(data?.settings); //create the game
 			const player = new Player({ id: socket.id, name: data.name, avatar: `https://avatars.dicebear.com/api/avataaars/:${data.avatar}.svg` }); //create the player
 			game.join(player); //add the player to the game
 			games.set(game.id, game); //store the game in the games map
@@ -107,7 +109,7 @@ module.exports = function (io) {
 		});
 
 		socket.on('test', () => {
-			console.log(games);
+			console.log('g', games);
 		});
 	});
 };

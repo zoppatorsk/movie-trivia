@@ -1,6 +1,6 @@
 <script>
 	import { io } from 'socket.io-client';
-	import { activeComponent, players, gameProps } from './lib/stores/';
+	import { activeComponent, players, gameProps, player } from './lib/stores/';
 	import Start from './components/Start.svelte';
 	import Lobby from './components/Lobby.svelte';
 	import Question from './components/Question.svelte';
@@ -8,6 +8,7 @@
 	import GameResult from './components/GameResult.svelte';
 	import Chat from './components/Chat.svelte';
 	import GameList from './components/GameList.svelte';
+	import GameSettings from './components/GameSettings.svelte';
 
 	let currentCount = -1;
 	let currentQuestion = {};
@@ -98,5 +99,8 @@
 	{/if}
 	{#if $activeComponent === 'GameList'}
 		<GameList {socket} />
+	{/if}
+	{#if $activeComponent === 'GameSettings'}
+		<GameSettings {socket} />
 	{/if}
 </div>

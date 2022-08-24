@@ -10,4 +10,4 @@ export const players = writable([
 	// { name: 'Benke bananen', avatar: 'https://avatars.dicebear.com/api/avataaars/:Pladddyer2.svg' },
 ]);
 export const gameProps = writable({ id: '', waitBetweenRound: 5, roundTime: 30 });
-export const playerId = writable('');
+export const player = writable({ name: '', seed: '', avatar: '', id: '' });
