@@ -16,19 +16,15 @@
 	let connected = '';
 	let message = '';
 	let gameResults = {};
-	let games = [
-		{ name: 'test1', players: 2, maxPlayers: 4, rounds: 3 },
-		{ name: 'test2', players: 2, maxPlayers: 4, rounds: 3 },
-		{ name: 'test2', players: 2, maxPlayers: 4, rounds: 3 },
-		{ name: 'test2', players: 2, maxPlayers: 4, rounds: 3 },
-		{ name: 'test2', players: 2, maxPlayers: 4, rounds: 3 },
-	];
+
+	// @ts-ignore
+
 	//do we need to put stuff in onmount?? guess will find out later..
 
 	const socket = io('http://localhost:3000');
 
 	socket.on('connect', () => {
-		//put some icon or somthing later
+		$activeComponent = 'Start';
 	});
 
 	//when player in disconnects
@@ -55,13 +51,13 @@
 
 	socket.on('round-start', () => {
 		//later determine by type what question componneet to use
-		$activeComponent = 'question';
+		$activeComponent = 'Question';
 	});
 
 	socket.on('end-round', (results) => {
 		roundResults = { ...results };
 		roundResults.answers = new Map(roundResults.answers);
-		$activeComponent = 'roundresult';
+		$activeComponent = 'RoundResult';
 	});
 
 	socket.on('end-game', (results) => {
@@ -71,7 +67,7 @@
 		gameResults.placement = new Map(gameResults.placement); //convert back to map
 		console.log('gameResults', gameResults.placement);
 
-		$activeComponent = 'gameresult';
+		$activeComponent = 'GameResult';
 		console.log('game results', gameResults);
 	});
 	socket.on('global-chat', (m) => {
@@ -82,19 +78,20 @@
 
 <div>
 	<!-- <Chat {socket} {message} /> -->
-	{#if $activeComponent === 'start'}
+
+	{#if $activeComponent === 'Start'}
 		<Start {socket} />
 	{/if}
-	{#if $activeComponent === 'lobby'}
+	{#if $activeComponent === 'Lobby'}
 		<Lobby {socket} {currentCount} />
 	{/if}
-	{#if $activeComponent === 'question'}
+	{#if $activeComponent === 'Question'}
 		<Question {currentCount} {socket} question={currentQuestion} />
 	{/if}
-	{#if $activeComponent === 'roundresult'}
+	{#if $activeComponent === 'RoundResult'}
 		<RoundResult {currentCount} {roundResults} />
 	{/if}
-	{#if $activeComponent === 'gameresult'}
+	{#if $activeComponent === 'GameResult'}
 		<GameResult results={gameResults} />
 	{/if}
 	{#if $activeComponent === 'GameList'}

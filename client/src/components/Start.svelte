@@ -27,7 +27,7 @@
 						gameProps.set(response.gameData);
 						$player.id = response.playerId;
 						//move to lobby
-						activeComponent.set('lobby');
+						activeComponent.set('Lobby');
 					}
 				});
 			} else alert('no game found');

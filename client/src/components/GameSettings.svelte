@@ -12,7 +12,7 @@
 
 	function createGame(gameSettings) {
 		console.log('gs', gameSettings);
-		activeComponent.set('GameSettings');
+		// activeComponent.set('GameSettings');
 		let data = { name: $player.name, avatar: $player.seed, settings: gameSettings };
 		socket.emit('create-game', data, (response) => {
 			console.log(response.status);
@@ -22,7 +22,7 @@
 				gameProps.set(response.gameData);
 				$player.id = response.playerId;
 				//move to lobby
-				activeComponent.set('lobby');
+				activeComponent.set('Lobby');
 			}
 		});
 	}

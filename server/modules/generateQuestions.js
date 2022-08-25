@@ -11,6 +11,9 @@ module.exports = async function generateQuestions(no) {
 
 		data.results.forEach((element) => {
 			const answers = shuffleArray(element.incorrect_answers.concat(element.correct_answer));
+			answers.forEach((answer, index) => {
+				answers[index] = he.decode(answer);
+			});
 			selectedQuestions.push(new PickOne({ question: he.decode(element.question), answers: answers, correctAnswer: element.correct_answer, type: 'pick-one' }));
 		});
 		return selectedQuestions;

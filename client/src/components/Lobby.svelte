@@ -2,7 +2,6 @@
 	import { players, gameProps } from '../lib/stores';
 	export let socket;
 	export let currentCount;
-
 	let clicked = false;
 
 	function playerReady() {
