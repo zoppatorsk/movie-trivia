@@ -103,6 +103,7 @@ module.exports = function (io) {
 			const question = game.questions[game.round - 1];
 
 			//set the answer for the player
+
 			player.answers[game.round - 1] = {
 				answer,
 				correct: question.isAnswerCorrect(answer),

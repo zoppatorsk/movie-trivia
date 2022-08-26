@@ -40,6 +40,7 @@
 </script>
 
 <div>
+	<h2>Game Options</h2>
 	<form>
 		<label for="gameName">Game Name</label>
 		<input id="gameName" type="text" bind:value={settings.name} />
@@ -65,3 +66,9 @@
 		<button on:click|preventDefault={() => createGame(settings)}>Create Game</button>
 	</form>
 </div>
+
+<style>
+	h2 {
+		margin-bottom: 10px;
+	}
+</style>

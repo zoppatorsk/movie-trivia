@@ -11,10 +11,10 @@ module.exports = class BaseQuestion {
 	}
 
 	isAnswerCorrect(answer) {
-		return answer === this.correctAnswer;
+		return answer == this.correctAnswer;
 	}
 	calculateScore(answer, time) {
-		if (this.isAnswerCorrect(answer)) return 100 + time * 10;
+		if (this.isAnswerCorrect(answer)) return 500 + time * 10;
 		else return 0;
 	}
 };

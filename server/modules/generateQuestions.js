@@ -17,7 +17,7 @@ module.exports = async function generateQuestions(game) {
 			answers.forEach((answer, index) => {
 				answers[index] = he.decode(answer);
 			});
-			selectedQuestions.push(new PickOne({ question: he.decode(element.question), answers: answers, correctAnswer: element.correct_answer, type: 'pick-one' }));
+			selectedQuestions.push(new PickOne({ question: he.decode(element.question), answers: answers, correctAnswer: he.decode(element.correct_answer), type: 'pick-one' }));
 		});
 		return selectedQuestions;
 	} catch (error) {
