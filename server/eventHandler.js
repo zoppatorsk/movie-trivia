@@ -15,6 +15,10 @@ module.exports = function (io) {
 			console.log(socket.id + ' disconnecting');
 		});
 
+		socket.on('leave-room', (gameid) => {
+			socket.leave(gameid);
+		});
+
 		socket.on('game-chat', (msg, gameid) => socket.to(games.get(gameid).id).emit('game-chat', msg));
 		//socket.on('global-chat', (msg, name) => socket.broadcast.emit('global-chat', msg, name, avatar));
 		socket.on('global-chat', (msg, name) => socket.broadcast.emit('global-chat', msg));
@@ -110,6 +114,7 @@ module.exports = function (io) {
 
 		socket.on('test', () => {
 			console.log('g', games);
+			console.log('rooms', io.sockets.adapter.rooms);
 		});
 	});
 };

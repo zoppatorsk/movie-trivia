@@ -30,7 +30,6 @@
 	//when player in disconnects
 	socket.on('player-joined', (player) => {
 		console.log('player joined', player);
-		//new player joined so at it to the store
 		$players = [...$players, player];
 	});
 
@@ -92,7 +91,7 @@
 		<RoundResult {currentCount} {roundResults} />
 	{/if}
 	{#if $activeComponent === 'GameResult'}
-		<GameResult results={gameResults} />
+		<GameResult results={gameResults} {socket} />
 	{/if}
 	{#if $activeComponent === 'GameList'}
 		<GameList {socket} />

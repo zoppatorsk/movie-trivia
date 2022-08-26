@@ -1,5 +1,6 @@
 <script>
 	import { players, gameProps } from '../lib/stores';
+	import { tweened } from 'svelte/motion';
 	export let socket;
 	export let currentCount;
 	let clicked = false;
@@ -8,11 +9,17 @@
 		clicked = true;
 		socket.emit('player-ready', $gameProps.id);
 	}
+	const progress = tweened($gameProps.waitBetweenRound, {
+		duration: 1000,
+	});
+	$: if (currentCount > -1) {
+		progress.set(currentCount - 1);
+	}
 </script>
 
 <div class="component-wrapper">
 	<h1>Lobby</h1>
-	<h2>{$gameProps.id}</h2>
+	<h2>{$gameProps.name}</h2>
 
 	<div class="player-wrapper">
 		{#each $players as player}
@@ -24,7 +31,7 @@
 	</div>
 
 	<button on:click|once={playerReady} disabled={clicked}>Ready</button>
-	<progress value={currentCount} max={$gameProps.waitBetweenRound} />
+	<progress value={$progress} max={$gameProps.waitBetweenRound} />
 
 	<h2>{currentCount > -1 ? currentCount : 'Waiting'}</h2>
 </div>
@@ -35,6 +42,13 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		padding: 20px;
+	}
+	h1 {
+		margin-bottom: 0px;
+	}
+	h2 {
+		font-size: 1rem;
 	}
 	button {
 		max-width: 200px;
@@ -58,13 +72,13 @@
 	@media screen and (max-width: 700px) {
 		.player-wrapper {
 			text-align: center;
-
-			flex-direction: column;
+			gap: 10px;
+			/* flex-direction: column; */
 			justify-content: center;
-			align-items: center;
 		}
 		img {
-			max-height: 50px;
+			height: 50px;
+			width: auto;
 		}
 	}
 </style>

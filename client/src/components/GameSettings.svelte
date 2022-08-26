@@ -7,7 +7,7 @@
 		maxPlayers: 3,
 		roundTime: 30,
 		waitBetweenRounds: 5,
-		name: 'my epic quiz',
+		name: `${$player.name}'s Game`,
 	};
 
 	function createGame(gameSettings) {

@@ -121,7 +121,7 @@ module.exports = class Game {
 			rounds: this.rounds,
 			waitBetweenRound: this.waitBetweenRounds,
 			roundTime: this.roundTime,
-			status: this.status,
+			name: this.name,
 		};
 	}
 
