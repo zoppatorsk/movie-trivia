@@ -1,7 +1,7 @@
 const { nanoid } = require('nanoid');
 
 module.exports = class Game {
-	constructor({ maxPlayers = 5, rounds = 1, roundTime = 30, name = 'epic game', waitBetweenRounds = 5 } = {}) {
+	constructor({ maxPlayers = 5, rounds = 1, roundTime = 30, name = 'epic game', waitBetweenRounds = 5, difficult = 'Medium', category = -1 } = {}) {
 		this.id = nanoid();
 		this.maxPlayers = maxPlayers;
 		this.rounds = rounds;
@@ -15,6 +15,9 @@ module.exports = class Game {
 		this.roundCountDown = null; //will hold the interval timer for the round
 		this.questions = [];
 		this.name = name;
+		this.difficult = difficult;
+		this.category = category;
+		// if (category) this.category = category;
 	}
 
 	startRoundCountDown(io, func) {

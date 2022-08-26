@@ -11,3 +11,4 @@ export const players = writable([
 ]);
 export const gameProps = writable({ id: '', waitBetweenRound: 5, roundTime: 30, name: '' });
 export const player = writable({ name: '', seed: '', avatar: '', id: '' });
+export const categories = writable([{ name: '', id: '' }]);

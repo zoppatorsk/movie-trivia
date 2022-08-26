@@ -44,7 +44,7 @@ module.exports = function (io) {
 			socket.join(game.id); //join the socket into a room for the game.. roomname is same as game.id
 
 			//-----here we should create the questions that the game will use
-			game.questions = await generateQuestions(game.rounds);
+			game.questions = await generateQuestions(game);
 			console.log(game.questions);
 			//this should take the player to the lobby.
 			callback({ status: 'ok', playerId: player.id, gameData: game.getPublicData(), players: game.getPlayersAsArray() });

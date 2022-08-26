@@ -1,5 +1,7 @@
 <script>
-	import { gameProps, players, player, activeComponent } from '../lib/stores';
+	import { onMount } from 'svelte';
+
+	import { gameProps, players, player, activeComponent, categories } from '../lib/stores';
 	export let socket;
 
 	const settings = {
@@ -8,7 +10,15 @@
 		roundTime: 30,
 		waitBetweenRounds: 5,
 		name: `${$player.name}'s Game`,
+		category: -1,
+		difficulty: 'Medium',
 	};
+
+	const difficulty = ['Easy', 'Medium', 'Hard'];
+	let selectedDifficult = 1;
+	$: settings.difficulty = difficulty[selectedDifficult];
+
+	$: console.log(settings);
 
 	function createGame(gameSettings) {
 		console.log('gs', gameSettings);
@@ -26,12 +36,24 @@
 			}
 		});
 	}
+	console.log('gs', settings);
 </script>
 
 <div>
 	<form>
-		<label for="gameName">Game name</label>
+		<label for="gameName">Game Name</label>
 		<input id="gameName" type="text" bind:value={settings.name} />
+
+		<label for="category">Category</label>
+		<select id="category" bind:value={settings.category}>
+			<option value={-1}>Mixed From All</option>
+			{#each $categories as category}
+				<option value={category.id}>{category.name}</option>
+			{/each}
+		</select>
+		<label for="Difficulty">Difficulty: {settings.difficulty}</label>
+		<input id="maxPlayers" type="range" min="0" max="2" bind:value={selectedDifficult} />
+
 		<label for="rounds">Rounds: {settings.rounds}</label>
 		<input id="rounds" type="range" min="1" max="10" bind:value={settings.rounds} />
 		<label for="maxPlayers">Max Players: {settings.maxPlayers}</label>

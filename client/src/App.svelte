@@ -1,6 +1,6 @@
 <script>
 	import { io } from 'socket.io-client';
-	import { activeComponent, players, gameProps, player } from './lib/stores/';
+	import { activeComponent, players, gameProps, player, categories } from './lib/stores/';
 	import Start from './components/Start.svelte';
 	import Lobby from './components/Lobby.svelte';
 	import Question from './components/Question.svelte';
@@ -9,6 +9,7 @@
 	import Chat from './components/Chat.svelte';
 	import GameList from './components/GameList.svelte';
 	import GameSettings from './components/GameSettings.svelte';
+	import { onMount } from 'svelte';
 
 	let currentCount = -1;
 	let currentQuestion = {};
@@ -20,6 +21,11 @@
 	// @ts-ignore
 
 	//do we need to put stuff in onmount?? guess will find out later..
+	onMount(async () => {
+		const res = await fetch(`https://opentdb.com/api_category.php`);
+		const { trivia_categories } = await res.json();
+		$categories = trivia_categories;
+	});
 
 	const socket = io('http://localhost:3000');
 
@@ -43,6 +49,7 @@
 	});
 
 	socket.on('ready-round', (question) => {
+		currentCount = -1;
 		console.log('q', question);
 		currentQuestion = question;
 		socket.emit('player-ready-round', $gameProps.id);
@@ -68,6 +75,7 @@
 
 		$activeComponent = 'GameResult';
 		console.log('game results', gameResults);
+		currentCount = -1;
 	});
 	socket.on('global-chat', (m) => {
 		console.log('got global chat', m);

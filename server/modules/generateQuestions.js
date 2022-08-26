@@ -3,9 +3,12 @@ const he = require('he');
 const PickOne = require('../questions/PickOne');
 const { shuffleArray } = require('./functions');
 
-module.exports = async function generateQuestions(no) {
+module.exports = async function generateQuestions(game) {
 	try {
-		const { data } = await axios.get(`https://opentdb.com/api.php?amount=${no}&type=multiple`);
+		let url = `https://opentdb.com/api.php?amount=${game.rounds}&type=multiple`;
+		if (game.difficulty) url += `&difficulty=${game.difficulty}`;
+		if (game.category && game.category !== -1) url += `&category=${game.category}`;
+		const { data } = await axios.get(url);
 
 		const selectedQuestions = [];
 
