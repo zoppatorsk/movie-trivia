@@ -26,8 +26,8 @@
 		const { trivia_categories } = await res.json();
 		$categories = trivia_categories;
 	});
-
-	const socket = io(import.meta.env.IO_CONNECT_STRING);
+	console.log(import.meta.env.VITE_IO_CONNECT_STRING);
+	const socket = io(import.meta.env.VITE_IO_CONNECT_STRING);
 	//const socket = io();
 
 	socket.on('connect', () => {

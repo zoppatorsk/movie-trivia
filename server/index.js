@@ -8,7 +8,7 @@ const path = require('path');
 
 //if run in dev put in the cors junk
 const ioConfig =
-	process.env.NODE_ENV == 'dev'
+	process.env.MODE == 'dev'
 		? {
 				cors: {
 					origin: ['http://localhost:5173', 'http://localhost:5174'],
@@ -17,6 +17,7 @@ const ioConfig =
 		  }
 		: {};
 
+console.log(ioConfig);
 const io = new Server(server, ioConfig);
 require('./eventHandler.js')(io);
 
