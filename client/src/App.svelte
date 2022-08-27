@@ -27,7 +27,7 @@
 		$categories = trivia_categories;
 	});
 
-	const socket = io('http://localhost:3000');
+	const socket = io(import.meta.env.IO_CONNECT_STRING);
 	//const socket = io();
 
 	socket.on('connect', () => {
