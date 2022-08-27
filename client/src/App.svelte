@@ -18,17 +18,22 @@
 	let message = '';
 	let gameResults = {};
 
-	// @ts-ignore
-
-	//do we need to put stuff in onmount?? guess will find out later..
+	// get categories from api
 	onMount(async () => {
 		const res = await fetch(`https://opentdb.com/api_category.php`);
 		const { trivia_categories } = await res.json();
+
+		//sort trivia_categories by name property
+		trivia_categories.sort((a, b) => {
+			if (a.name < b.name) return -1;
+			if (a.name > b.name) return 1;
+			return 0;
+		});
+
 		$categories = trivia_categories;
 	});
-	console.log(import.meta.env.VITE_IO_CONNECT_STRING);
+
 	const socket = io(import.meta.env.VITE_IO_CONNECT_STRING);
-	//const socket = io();
 
 	socket.on('connect', () => {
 		$activeComponent = 'Start';

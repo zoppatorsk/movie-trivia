@@ -4,6 +4,7 @@
 	import { gameProps, players, player, activeComponent, categories } from '../lib/stores';
 	export let socket;
 
+	//hold settings, what put here will be the default
 	const settings = {
 		rounds: 3,
 		maxPlayers: 3,
@@ -62,7 +63,7 @@
 		<label for="roundTime">Round Time: {settings.roundTime}s</label>
 		<input id="roundTime" type="range" min="10" max="60" bind:value={settings.roundTime} />
 		<label for="waitTimeBetweenRounds">Wait Between Rounds: {settings.waitBetweenRounds}s</label>
-		<input id="waitTimeBetweenRounds" type="range" min="5" max="20" bind:value={settings.waitBetweenRounds} />
+		<input id="waitTimeBetweenRounds" type="range" min="1" max="20" bind:value={settings.waitBetweenRounds} />
 		<button on:click|preventDefault={() => createGame(settings)}>Create Game</button>
 	</form>
 </div>
