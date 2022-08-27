@@ -52,9 +52,9 @@
 	<div class="buttons" class:disabled={!$player.seed || !$player.name}>
 		<button on:click={() => activeComponent.set('GameSettings')}>Create Game</button>
 		<button on:click={quickPlay}>Quickplay</button>
-		<!-- <button on:click={gameList}>List Games</button> -->
+		<button on:click={gameList}>List Games</button>
 	</div>
-	<!-- <button on:click={test}>test</button> -->
+	<button on:click={test}>test</button>
 </div>
 
 <style>

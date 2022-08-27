@@ -16,6 +16,7 @@ module.exports = function (io) {
 		});
 
 		socket.on('leave-room', (gameid) => {
+			disconnecting(io, socket, games);
 			socket.leave(gameid);
 		});
 

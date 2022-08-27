@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { player, activeComponent, gameProps, players } from '../lib/stores/';
 
 	//export let games;
 	let games = [];
@@ -13,15 +14,20 @@
 
 	function joinGame(game) {
 		console.log('join game');
-
-		//maybe later extract current joingame function in start.svelte n pass it down to this component
-		//shld put player n junk into a store o pass it down to this component
-
-		//socket.emit('join-game', game.id);
+		socket.emit('join-game', { gameId: game, name: $player.name, avatar: $player.seed }, (response) => {
+			if (response.status === 'ok') {
+				players.set(response.players);
+				gameProps.set(response.gameData);
+				$player.id = response.playerId;
+				//move to lobby
+				activeComponent.set('Lobby');
+			} else alert('Could not join game'); //later add modal instead of alert
+		});
 	}
 </script>
 
 <div class="container">
+	<h1>Open Games</h1>
 	<ul class="game-list">
 		{#each games as game}
 			<li>
@@ -43,6 +49,9 @@
 </div>
 
 <style>
+	h2 {
+		font-size: 1.1rem;
+	}
 	.flex-row {
 		display: flex;
 		justify-content: space-between;
