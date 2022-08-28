@@ -1,6 +1,3 @@
-
-
-
 Client
 - build results component -started
 - build end game component -started
@@ -8,8 +5,7 @@ Client
 - build some question components -started
 - build chat component -started
 - build loading component
-- create game settings component
-
+- create game settings component --started
 - implement preload logic
 
 Server
@@ -20,7 +16,5 @@ Server
 - send game results to client -done
 - on handler for request of game list -done
 - add game chat -started
-
 - preload logic for questions
-
 - move the round scores to player object inside game object? - done
