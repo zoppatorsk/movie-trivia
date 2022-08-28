@@ -16,8 +16,10 @@ module.exports = function (io) {
 		});
 
 		socket.on('leave-room', (gameid) => {
-			disconnecting(io, socket, games);
-			socket.leave(gameid);
+			if (gameid) {
+				disconnecting(io, socket, games); //leave the game n do cleanup if needed
+				socket.leave(gameid); //leave socket room
+			}
 		});
 
 		socket.on('game-chat', (msg, gameid) => socket.to(games.get(gameid).id).emit('game-chat', msg));
@@ -159,6 +161,7 @@ function endRound(io, game) {
 
 function shouldGameStart(io, game) {
 	//if less than half of players are not ready then just return
+	if (game.howManyPlayersReady() == 0) game.status = 'open';
 	if (game.howManyPlayersReady() < game.players.size / 2) return;
 	getReady(io, game);
 }

@@ -6,6 +6,7 @@
 	import Question from './components/Question.svelte';
 	import RoundResult from './components/RoundResult.svelte';
 	import GameResult from './components/GameResult.svelte';
+	import BackButton from './components/BackButton.svelte';
 	import Chat from './components/Chat.svelte';
 	import GameList from './components/GameList.svelte';
 	import GameSettings from './components/GameSettings.svelte';
@@ -91,6 +92,9 @@
 
 <div>
 	<!-- <Chat {socket} {message} /> -->
+	{#if $activeComponent !== 'Start'}
+		<BackButton {socket} />
+	{/if}
 
 	{#if $activeComponent === 'Start'}
 		<Start {socket} />
@@ -105,7 +109,7 @@
 		<RoundResult {currentCount} {roundResults} />
 	{/if}
 	{#if $activeComponent === 'GameResult'}
-		<GameResult results={gameResults} {socket} />
+		<GameResult results={gameResults} />
 	{/if}
 	{#if $activeComponent === 'GameList'}
 		<GameList {socket} />

@@ -22,16 +22,24 @@
 
 <div class="wrapper">
 	<h2>{question.question}</h2>
-	{#each question.answers as answer}
-		<button disabled={hasAnswered} on:click={() => sendAnswer(answer)}>{answer}</button>
-	{/each}
+	<div class="button-wrapper">
+		{#each question.answers as answer}
+			<button disabled={hasAnswered} on:click={() => sendAnswer(answer)}>{answer}</button>
+		{/each}
+	</div>
 
-	Time left:
+	Time left:<span>{currentCount}</span>
 	<progress value={$progress} max={$gameProps.roundTime} />
-	<h3>{currentCount}</h3>
 </div>
 
 <style>
+	.button-wrapper {
+		margin-left: 20px;
+		margin-right: 20px;
+	}
+	span {
+		color: white;
+	}
 	.wrapper {
 		padding: 20px;
 	}

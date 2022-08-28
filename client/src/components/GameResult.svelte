@@ -1,17 +1,12 @@
 <script>
 	export let results;
-	export let socket;
-	import { activeComponent, gameProps } from '../lib/stores';
-
-	const back = () => {
-		socket.emit('leave-room', $gameProps.id);
-		$activeComponent = 'Start';
-	};
+	results.players.sort((a, b) => {
+		return results.score.get(b.id) - results.score.get(a.id);
+	});
 </script>
 
-<button class="back" on:click={back}>Back</button>
 <h2>Game Over</h2>
-<div class="player-wrapper">
+<!-- <div class="player-wrapper">
 	{#each results.players as player}
 		<div>
 			<img src={player.avatar} alt="avatar" />
@@ -23,33 +18,98 @@
 			<p>Place: {results.placement.get(player.id)}</p>
 			<p>{results.score.get(player.id)}</p>
 		</div>
-	{/each}
+	{/each} -->
+<div class="place-wrapper">
+	<ol>
+		{#each results.players as player}
+			<li class="player-wrapper">
+				#{results.placement.get(player.id)} <img src={player.avatar} alt="avatar" />
+				<div class="player-name">{player.name}</div>
+				<div class="score">{results.score.get(player.id)} pts</div>
+			</li>
+			<hr />
+		{/each}
+	</ol>
 </div>
 
 <style>
-	.back {
-		position: absolute;
-		top: 10px;
-		left: 10px;
-		width: 100px;
-		padding: 10px;
-	}
 	h2 {
 		text-align: center;
 	}
-	img {
+	/* img {
 		margin-left: auto;
 		margin-right: auto;
-		display: block;
+
 		width: 200px;
+	} */
+	.place-wrapper {
+		padding: 20px;
+		width: 100vw;
+		max-width: 1200px;
+		margin: 0 auto;
+	}
+	.place-wrapper > ol {
+		padding: 0;
+	}
+
+	.place-wrapper img {
+		max-height: 50px;
 	}
 	.player-wrapper {
-		text-align: center;
-		gap: 10px;
+		width: 100%;
 		display: flex;
-		flex-wrap: wrap;
-		flex-direction: row;
-		justify-content: space-evenly;
-		align-items: center;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 20px;
+		font-size: 60px;
+	}
+	.player-name {
+		margin-right: 20px;
+		max-width: 16ch;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+	.score {
+		margin-left: auto;
+	}
+	hr {
+		padding: 0;
+		margin: 0;
+		margin-top: -20px;
+	}
+	@media screen and (max-width: 900px) {
+		.place-wrapper img {
+			max-height: 26px;
+		}
+		.player-wrapper {
+			font-size: 30px;
+			gap: 10px;
+		}
+		hr {
+			padding: 0;
+			margin: 0;
+			margin-top: -10px;
+		}
+		.player-name {
+			max-width: 10ch;
+		}
+	}
+	@media screen and (max-width: 400px) {
+		.place-wrapper img {
+			max-height: 20px;
+		}
+		.player-wrapper {
+			font-size: 20px;
+			gap: 10px;
+		}
+		hr {
+			padding: 0;
+			margin: 0;
+			margin-top: -10px;
+		}
+		.player-name {
+			max-width: 10ch;
+		}
 	}
 </style>
