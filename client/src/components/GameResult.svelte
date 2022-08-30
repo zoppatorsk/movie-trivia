@@ -31,22 +31,75 @@
 		{/each}
 	</ol>
 </div>
+<div class="last-round-wrapper">
+	<h2>Last Round</h2>
+	<p>Correct Answer: {results.lastRound.correctAnswer}</p>
+	<div class="flex-row">
+		{#each results.players as player}
+			<div class="last-round-player-wrapper">
+				<img src={player.avatar} alt="avatar" />
+				<p>{player.name}</p>
+				<p class="player-answer"><span>{results.lastRound.answers.get(player.id).correct ? '✔' : '❌'} </span>{results.lastRound.answers.get(player.id).answer ? results.lastRound.answers.get(player.id).answer : 'DNA'}</p>
+				<p>{results.lastRound.answers.get(player.id).score} pts</p>
+			</div>
+		{/each}
+	</div>
+</div>
 
 <style>
 	h2 {
 		text-align: center;
 	}
-	/* img {
-		margin-left: auto;
-		margin-right: auto;
+	.player-answer {
+		max-width: 300px;
+		text-align: center;
+		font-size: 0.8rem;
+		max-width: 34ch;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+	.flex-row {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: baseline;
+	}
 
-		width: 200px;
-	} */
 	.place-wrapper {
 		padding: 20px;
 		width: 100vw;
 		max-width: 1200px;
 		margin: 0 auto;
+	}
+	.last-round-wrapper {
+		padding: 20px;
+		width: 100vw;
+
+		margin: 0 auto;
+	}
+	.last-round-wrapper h2 {
+		text-align: center;
+		margin-bottom: 1rem;
+	}
+	.last-round-wrapper > p {
+		text-align: center;
+		margin: 0;
+	}
+
+	.last-round-player-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		margin: 20px;
+	}
+	.last-round-player-wrapper p {
+		margin: 0;
+	}
+	.last-round-player-wrapper img {
+		width: 120px;
 	}
 	.place-wrapper > ol {
 		padding: 0;
