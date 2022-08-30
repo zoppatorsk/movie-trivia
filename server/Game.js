@@ -150,6 +150,8 @@ module.exports = class Game {
 				player.answers.map((a) => a.score).reduce((a, b) => a + b) //map to array and reduce into a single value
 			);
 		});
+		results.players = this.getPlayersAsArray(); //send with players if want to show some more info, and also if player dissconnects we still have all the info n can display it.
+		results.players.sort((a, b) => score.get(b.id) - score.get(a.id)); //sort players by score
 		results.placement = Array.from(this.playerPlacement(score)); //order of players in game by score convereted to array
 		results.score = Array.from(score); //transform map into array so can be sent to frontend (cant send Map over socket)
 		results.players = this.getPlayersAsArray(); //send with players if want to show some more info, and also if player dissconnects we still have all the info n can display it.
