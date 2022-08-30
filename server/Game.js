@@ -62,13 +62,6 @@ module.exports = class Game {
 		this.players.delete(playerid);
 	}
 
-	// addDnaIfNeeded() {
-	// 	this.players.forEach((player) => {
-	// 		console.log('a', player.answers);
-	// 		console.log('round', this.round);
-	// 		if (!player.answers[this.round - 1]) player.answers[this.round - 1] = 'DNA';
-	// 	});
-	// }
 	addAnswerForDNA() {
 		this.players.forEach((player) => {
 			if (!player.answers[this.round - 1]) player.answers[this.round - 1] = { answer: '', correct: false, time: null, score: 0 };
