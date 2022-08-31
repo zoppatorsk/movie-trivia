@@ -9,7 +9,7 @@ Client
 - implement preload logic
 
 Server
-
+- send scores when round ends
 - scoring system -example done
 - questions generator -example done
 - send round results to client -done
