@@ -68,8 +68,13 @@
 	});
 
 	socket.on('end-round', (results) => {
-		roundResults = { ...results };
-		roundResults.answers = new Map(roundResults.answers);
+		//fix code duplication later
+		gameResults = { ...results };
+		gameResults.lastRound.answers = new Map(gameResults.lastRound.answers); //convert back to map
+		gameResults.score = new Map(gameResults.score); //convert back to map
+		gameResults.placement = new Map(gameResults.placement); //convert back to map
+		// roundResults = { ...results };
+		// roundResults.answers = new Map(roundResults.answers);
 		$activeComponent = 'RoundResult';
 	});
 
@@ -106,7 +111,7 @@
 		<Question {currentCount} {socket} question={currentQuestion} />
 	{/if}
 	{#if $activeComponent === 'RoundResult'}
-		<RoundResult {currentCount} {roundResults} />
+		<RoundResult {currentCount} results={gameResults} />
 	{/if}
 	{#if $activeComponent === 'GameResult'}
 		<GameResult results={gameResults} />

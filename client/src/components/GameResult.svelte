@@ -1,8 +1,8 @@
 <script>
 	export let results;
-	results.players.sort((a, b) => {
-		return results.score.get(b.id) - results.score.get(a.id);
-	});
+	// results.players.sort((a, b) => {
+	// 	return results.score.get(b.id) - results.score.get(a.id);
+	// });
 </script>
 
 <h2>Game Over</h2>

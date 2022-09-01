@@ -69,8 +69,6 @@ module.exports = class Game {
 	}
 
 	compileAnswers() {
-		//later add correct answer n transform compiled answer into object instead
-		//just let this function be responsible for all the needed stuff n not split logic between game loop and game class
 		this.addAnswerForDNA();
 		let playerAnswers = new Map(); //create a map as will be easier to deal with on frontend
 		this.players.forEach((player) => {
@@ -124,7 +122,7 @@ module.exports = class Game {
 	//easier to do stuff on frontend with players as an array instead of a map
 	getPlayersAsArray() {
 		let playersArr = [];
-		//overhaul later so only send info needed.
+		//overhaul later maybe so only send info needed.. id,name, avatar, answers?
 		this.players.forEach((player) => {
 			playersArr.push({ ...player });
 		});
@@ -132,6 +130,8 @@ module.exports = class Game {
 	}
 
 	compileResults() {
+		//send this at every round end instead
+
 		//what shld i really send??
 		let results = {};
 		results.lastRound = this.compileAnswers(); //last round answers

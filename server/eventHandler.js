@@ -153,7 +153,7 @@ function endRound(io, game) {
 	} else {
 		game.status = 'end-round';
 		const playerAnswers = game.compileAnswers();
-		io.to(game.id).emit('end-round', playerAnswers);
+		io.to(game.id).emit('end-round', game.compileResults());
 		game.round++;
 		getReady(io, game);
 	}
